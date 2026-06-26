@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hound's Hearth — Honest Dog Nutrition, Treats & Care Advice</title>
+<meta name="description" content="Your trusted advisor for premium dog food, supplements, treats and grooming. Honest, vet-informed guidance for dog lovers and breeders." />
+<meta property="og:title" content="Hound's Hearth — Honest Dog Nutrition, Treats & Care Advice" />
+<meta property="og:description" content="Your trusted advisor for premium dog food, supplements, treats and grooming. Honest, vet-informed guidance for dog lovers and breeders." />
+<meta property="og:type" content="website" />
+<!--
+=========================================================================
+  Hound's Hearth — Tracking & Attribution Snippet  (IDs FILLED IN)
+=========================================================================
+  Paste this entire block INSIDE the <head>...</head> of every page.
+  All 4 IDs are already filled in below:
+    GA4 Measurement ID:        G-SE5HXBZHWF
+       (Property "Hound's Hearth" under account 156931159
+        "Thrive Freeze Dried Food", info@thrivefreeze.com)
+    Microsoft UET Tag ID:      211075480
+       (Tag "Hound's Hearth" in MS Ads sandeepdar@hotmail.com)
+    Google Ads Conversion ID:  AW-11033587773
+       (Account 678-202-0572, info@thrivefreeze.com)
+    Google Ads Conv. Label:    JJn0CNDhlMYcEL3gnI0p
+       (Conversion action "Houndshearth - Outbound to PawTree",
+        category Purchase, value $1.50/click)
+=========================================================================
+-->
+<!-- ===== 1. Google Tag (GA4 + Google Ads, single loader) ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SE5HXBZHWF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  // GA4 property (Hound's Hearth, account 156931159)
+  gtag('config', 'G-SE5HXBZHWF', {
+    send_page_view: true,
+    anonymize_ip: true
+  });
+  // Google Ads account 678-202-0572 (linked to the same gtag.js loader)
+  gtag('config', 'AW-11033587773');
+</script>
+<!-- ===== 2. Microsoft UET (Bing/MS Ads) ===== -->
+<script>
+  (function(w,d,t,r,u){
+    var f,n,i; w[u]=w[u]||[], f=function(){
+      var o={ti:"211075480", enableAutoSpaTracking:true};
+      o.q=w[u], w[u]=new UET(o), w[u].push("pageLoad");
+    }, n=d.createElement(t), n.src=r, n.async=1,
+       n.onload=n.onreadystatechange=function(){
+         var s=this.readyState; s && s!=="loaded" && s!=="complete" || (f(),n.onload=n.onreadystatechange=null);
+       }, i=d.getElementsByTagName(t)[0], i.parentNode.insertBefore(n,i);
+  })(window,document,"script","//bat.bing.com/bat.js","uetq");
+</script>
+<!-- ===== 3. Click-ID capture + PawTree link decoration + outbound tracking ===== -->
+<script>
+(function () {
+  // ---- a) Capture gclid (Google) & msclkid (Microsoft) into localStorage on landing ----
+  //         so a visitor who clicks the ad, browses 3 pages, THEN clicks Buy now
+  //         still carries the original click ID to PawTree.
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var gclid  = params.get('gclid');
+    var msclkid = params.get('msclkid');
+    if (gclid)   localStorage.setItem('hh_gclid',   JSON.stringify({ v: gclid,   t: Date.now() }));
+    if (msclkid) localStorage.setItem('hh_msclkid', JSON.stringify({ v: msclkid, t: Date.now() }));
+  } catch (e) {}
+  // Read a click ID that is no older than 30 days
+  function readClickId(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+      if (!obj || !obj.v || (Date.now() - obj.t) > THIRTY_DAYS) return null;
+      return obj.v;
+    } catch (e) { return null; }
+  }
+  // ---- b) Decorate every PawTree link with the stored click IDs ----
+  //         PawTree will then echo these back to you in the affiliate report,
+  //         which is what lets you match a Google/MS Ads click to an actual sale.
+  function decorate(a) {
+    try {
+      if (!a || !a.href || !/(^|\.)pawtree\.com/i.test(a.hostname)) return;
+      var u = new URL(a.href);
+      var g = readClickId('hh_gclid');
+      var m = readClickId('hh_msclkid');
+      if (g && !u.searchParams.has('gclid'))   u.searchParams.set('gclid', g);
+      if (m && !u.searchParams.has('msclkid')) u.searchParams.set('msclkid', m);
+      // tag every outbound for analytics — handy for filtering in PawTree reports
+      if (!u.searchParams.has('utm_source')) u.searchParams.set('utm_source', 'houndshearth');
+      if (!u.searchParams.has('utm_medium')) u.searchParams.set('utm_medium', 'affiliate');
+      a.href = u.toString();
+    } catch (e) {}
+  }
+  // Run on initial load + whenever DOM changes (covers SPA-rendered cards)
+  function decorateAll() {
+    document.querySelectorAll('a[href*="pawtree.com"]').forEach(decorate);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', decorateAll);
+  } else {
+    decorateAll();
+  }
+  // Re-run on DOM mutations (debounced)
+  var mutTimer = null;
+  new MutationObserver(function () {
+    clearTimeout(mutTimer);
+    mutTimer = setTimeout(decorateAll, 100);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  // ---- c) Fire conversion events on click / aux-click / mousedown ----
+  //         mousedown catches middle-click + Cmd-click "open in new tab" cases
+  //         where the user never returns to dispatch a normal click.
+  function fireOutboundConversion(a) {
+    if (!a || !a.href) return;
+    var host;
+    try { host = new URL(a.href).hostname; } catch (e) { return; }
+    if (!/(^|\.)pawtree\.com/i.test(host)) return;
+    // Try to pull product info from the URL or the surrounding card
+    var match = (a.href || '').match(/\/product\/([^/?#]+)/);
+    var productSlug = match ? match[1] : '';
+    var productName = (a.closest('[data-product-name]') || {}).dataset
+                      ? a.closest('[data-product-name]').dataset.productName
+                      : '';
+    // ---- GA4 event (will be marked as Key Event in GA4 → Admin → Events) ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'outbound_click', {
+        link_domain: host,
+        link_url: a.href,
+        link_text: (a.textContent || '').trim().slice(0, 60),
+        product_slug: productSlug,
+        product_name: productName
+      });
+    }
+    // ---- Google Ads conversion ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-11033587773/JJn0CNDhlMYcEL3gnI0p',
+        value: 1.5,
+        currency: 'USD',
+        transaction_id: productSlug + '_' + Date.now()
+      });
+    }
+    // ---- Microsoft UET goal ----
+    if (window.uetq && typeof window.uetq.push === 'function') {
+      window.uetq.push('event', 'outbound_click', {
+        event_category: 'affiliate',
+        event_label: host,
+        event_value: 1
+      });
+    }
+  }
+  // Attach listeners with capture:true so we run BEFORE the link navigates away
+  ['mousedown', 'click', 'auxclick'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      // re-decorate at the moment of click in case the link was just added
+      decorate(a);
+      fireOutboundConversion(a);
+    }, true);
+  });
+})();
+</script>
+
+<link rel="icon" href="img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://images.pexels.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">Trusted by 2,000+ pet families across the Thrive Freeze &amp; Hound&#39;s Hearth family — honest advice you can act on. <strong>Ask Scout 24/7: (415) 792-0501</strong></div>
+<nav><div class="nav-inner">
+  <a class="logo" href="index.html"><span class="mk"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span><span>Hound&#39;s Hearth<small>Dog Nutrition &amp; Care</small></span></a>
+  <div class="nav-links" id="navlinks">
+    <div class="has-drop"><a href="shop.html">Shop</a>
+      <div class="drop">
+        <a href="food.html"><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg> Food &amp; Toppers</a>
+        <a href="treats.html"><svg class="ico" viewBox="0 0 24 24"><path d="M7 9.5a2.2 2.2 0 1 0-2-2.6 2.2 2.2 0 1 0 .4 3.4l9.2 5.3a2.2 2.2 0 1 0 2 2.6 2.2 2.2 0 1 0-.4-3.4Z"/></svg> Treats</a>
+        <a href="supplements.html"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg> Supplements</a>
+        <a href="grooming.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg> Grooming &amp; Spa</a>
+        <a href="seasonings.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg> Seasonings</a>
+        <a href="toys.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z"/></svg> Toys</a>
+        <a href="sets.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg> Solution Sets</a>
+        <a href="shop.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg> Shop everything</a>
+      </div>
+    </div>
+    <a href="solutions.html">Solutions</a>
+    <a href="planner.html">Dog Planner</a>
+    <a href="advisor.html">Ask Scout</a>
+    <a href="guides.html">Guides</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-cta">
+    <a class="btn btn-primary btn-sm" href="shop.html">Shop the store <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+    <button class="burger" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div class="hero-text">
+    <span class="eyebrow">Trusted advisor for dog parents &amp; breeders</span>
+    <h1>Premium nutrition &amp; care for the dog who <em>deserves better.</em></h1>
+    <p class="lead">From food and freeze-dried treats to supplements and at-home spa days — Hound&#39;s Hearth gives you honest, vet-informed guidance and the trusted brands we&#39;d feed our own pack.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="planner.html">Build your dog&#39;s plan <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn-ghost" href="advisor.html">Talk to Scout, free</a>
+    </div>
+    <div class="hero-trust">
+      <span class="av"><span style="background-image:url(https://images.pexels.com/photos/18056082/pexels-photo-18056082.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/16299046/pexels-photo-16299046.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/35271864/pexels-photo-35271864.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span></span>
+      <span><span class="stars"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></span><br>Trusted by 2,000+ pet families<br><span style="font-size:.74rem;opacity:.78">across the Thrive Freeze &amp; Hound&#39;s Hearth family</span></span>
+    </div>
+  </div>
+  <div class="hero-photo"><img class="hero-img" src="img/hero-dog.jpg" alt="A happy, healthy dog" />
+    <div class="hero-chip c1"><span class="ci"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></span><div><b>Vet &amp; PhD formulated</b><span>Real, single-source ingredients</span></div></div>
+    <div class="hero-chip c2"><span class="ci"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z"/></svg></span><div><b>Honest, not pushy</b><span>We&#39;ll tell you when to save</span></div></div>
+  </div>
+</div></header><div class="marquee"><div class="marquee-track"><span><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg><b>Real, single-source ingredients</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg><b>Vet &amp; PhD-formulated</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M7 9.5a2.2 2.2 0 1 0-2-2.6 2.2 2.2 0 1 0 .4 3.4l9.2 5.3a2.2 2.2 0 1 0 2 2.6 2.2 2.2 0 1 0-.4-3.4Z"/></svg><b>Freeze-dried raw treats</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M4 14 14 4l6 6L10 20Z"/><path d="M8 8.5 9.5 10M11 6l1.5 1.5M14 11l1.5 1.5M11 14l1.5 1.5"/></svg><b>Personalized feeding plans</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg><b>Spa-grade grooming</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg><b>No corn, wheat or soy</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg><b>Real, single-source ingredients</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg><b>Vet &amp; PhD-formulated</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M7 9.5a2.2 2.2 0 1 0-2-2.6 2.2 2.2 0 1 0 .4 3.4l9.2 5.3a2.2 2.2 0 1 0 2 2.6 2.2 2.2 0 1 0-.4-3.4Z"/></svg><b>Freeze-dried raw treats</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M4 14 14 4l6 6L10 20Z"/><path d="M8 8.5 9.5 10M11 6l1.5 1.5M14 11l1.5 1.5M11 14l1.5 1.5"/></svg><b>Personalized feeding plans</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg><b>Spa-grade grooming</b></span><span><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg><b>No corn, wheat or soy</b></span></div></div>
+<section><div class="wrap"><div class="sec-head"><span class="eyebrow">Solutions by symptom</span><h2>Fix what you thought you had to live with</h2><p>Itching, shedding, bad breath, gas — common, but not just &ldquo;how dogs are.&rdquo; Tap a concern.</p></div>
+<div class="symp">
+  <a href="product-skin-support.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg> Itching &amp; hot spots</a>
+  <a href="product-wild-salmon-oil.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg> Excess shedding</a>
+  <a href="product-plaque-control.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4c2-1.5 5-1 6 1.2 1.2 2.6-.3 4.3-.6 6.6-.3 2.4-.6 6.2-2 6.2-1.6 0-1-3.5-3.4-3.5S9 18 7.6 18c-1.4 0-1.7-3.8-2-6.2-.3-2.3-1.8-4-.6-6.6C6 3 9 2.5 11 4Z"/></svg> Bad breath</a>
+  <a href="product-gastro-pro-plus.html"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg> Sensitive stomach</a>
+  <a href="product-joint-support-plus.html"><svg class="ico" viewBox="0 0 24 24"><path d="M7 9.5a2.2 2.2 0 1 0-2-2.6 2.2 2.2 0 1 0 .4 3.4l9.2 5.3a2.2 2.2 0 1 0 2 2.6 2.2 2.2 0 1 0-.4-3.4Z"/></svg> Stiff joints</a>
+  <a href="product-allergy-support.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg> Allergies</a>
+  <a href="product-immunoshroom.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg> Low energy</a>
+  <a href="solutions.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> See all solutions</a>
+</div></div></section>
+<section class="soft"><div class="wrap"><div class="split">
+  <div class="split-media">
+    <span class="blob tl"></span>
+    <img src="https://images.pexels.com/photos/6568950/pexels-photo-6568950.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=720" alt="Healthy dog eating from a bowl" />
+    <div class="tagchip"><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg><b>Real food, measured right</b></div>
+  </div>
+  <div class="split-text">
+    <span class="eyebrow">Guided, not guessed</span>
+    <h2>Everything your dog needs — in the right amount</h2>
+    <p>We cut through the marketing noise with honest advice. Tell us about your dog and we&#39;ll build a plan around real, single-source recipes we trust and feed our own dogs.</p>
+    <ul class="split-list">
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Personalized portions by breed, age &amp; weight</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>No corn, wheat or soy fillers</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Targeted supplements only when they help</span></li>
+    </ul>
+    <a class="btn btn-primary" href="planner.html">Open the Dog Planner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+  </div>
+</div></div></section><section><div class="wrap"><div class="sec-head"><span class="eyebrow">Shop by purpose</span><h2>What does your dog need today?</h2><p>Tell us the goal and we&#39;ll point you to exactly what helps — each with its own honest guide.</p></div><div class="cattiles"><a class="cattile" href="food.html"><img src="https://images.pexels.com/photos/6568950/pexels-photo-6568950.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=800" alt="Food &amp; Toppers" /><div class="ct"><h3>Food &amp; Toppers</h3><p>Real, single-source recipes and craveable meal t…</p><span class="go">Explore <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a><a class="cattile" href="treats.html"><img src="https://images.pexels.com/photos/35271864/pexels-photo-35271864.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=800" alt="Treats" /><div class="ct"><h3>Treats</h3><p>Freeze-dried raw treats with one protein and two…</p><span class="go">Explore <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a><a class="cattile" href="supplements.html"><img src="https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=800" alt="Supplements" /><div class="ct"><h3>Supplements</h3><p>Vet &amp; PhD-formulated daily support for skin,…</p><span class="go">Explore <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a><a class="cattile" href="grooming.html"><img src="https://images.pexels.com/photos/13062569/pexels-photo-13062569.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=800" alt="Grooming &amp; Spa" /><div class="ct"><h3>Grooming &amp; Spa</h3><p>Spa-grade shampoos and ear care for at-home spa …</p><span class="go">Explore <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a></div></div></section><section class="trustband"><div class="wrap"><p class="center trust-eyebrow">The standards we hold our partners to</p><div class="trustbar"><div class="trust"><span class="trust-ic"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span><span>Vet &amp; PhD Formulated</span></div><div class="trust"><span class="trust-ic"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></span><span>No Artificial Additives</span></div><div class="trust"><span class="trust-ic"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 9c-1.6-1.6-4.2-1.6-4.2-1.6s0 2.6 1.6 4.2c1.6 1.6 2.6.6 2.6.6Z"/><path d="M12 9c1.6-1.6 4.2-1.6 4.2-1.6s0 2.6-1.6 4.2c-1.6 1.6-2.6.6-2.6.6Z"/><path d="M12 15c-1.6-1.6-4.2-1.6-4.2-1.6s0 2.6 1.6 4.2c1.6 1.6 2.6.6 2.6.6Z"/><path d="M12 15c1.6-1.6 4.2-1.6 4.2-1.6s0 2.6-1.6 4.2c-1.6 1.6-2.6.6-2.6.6Z"/></svg></span><span>No Corn, Wheat or Soy</span></div><div class="trust"><span class="trust-ic"><svg class="ico" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h11l-2 3.2L16 11H5"/></svg></span><span>Made in the USA</span></div><div class="trust"><span class="trust-ic"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></span><span>Satisfaction Guaranteed</span></div></div></div></section><section><div class="wrap"><div class="sec-head"><span class="eyebrow">Popular right now</span><h2>Dog-parent favorites</h2><p>From the trusted line we feed our own dogs. Every link goes to our trusted store — we may earn a commission, at no extra cost to you.</p></div><div class="prod-grid"><div class="prod">
+  <div class="prod-top contain" style="background:linear-gradient(150deg,#dff0ea,#a6dbc8)"><span class="pill">Best seller</span><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/a4db8034-85b8-4c90-1de3-ab12c842bb00/public" alt="Wild Alaskan Salmon &amp; Pollock Oil" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Skin &amp; Coat</span>
+    <h4>Wild Alaskan Salmon &amp; Pollock Oil</h4>
+    <span class="price">$19.99</span>
+    <div class="actions">
+      <a class="learn" href="product-wild-salmon-oil.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Wild-Alaskan-Salmon-Pollock-Oil-GM2018" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top contain" style="background:linear-gradient(150deg,#dff0ea,#a6dbc8)"><span class="pill">Best seller</span><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/ec2e3c73-f987-4707-c0fc-972451405500/public" alt="Gastro Pro Plus" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Digestive</span>
+    <h4>Gastro Pro Plus</h4>
+    <span class="price">$35.99</span>
+    <div class="actions">
+      <a class="learn" href="product-gastro-pro-plus.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Gastro-Pro-Plus-GM2021" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top contain" style="background:linear-gradient(150deg,#dff0ea,#a6dbc8)"><span class="pill">Best seller</span><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/3d77f343-2811-4b92-d7d0-c237b75a3500/public" alt="Plaque Control" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Dental</span>
+    <h4>Plaque Control</h4>
+    <span class="price">$34.99</span>
+    <div class="actions">
+      <a class="learn" href="product-plaque-control.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Plaque-Control-GM2475" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top contain" style="background:linear-gradient(150deg,#dff0ea,#a6dbc8)"><span class="pill">Best seller</span><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/a2f501e1-1d52-4745-176b-64161999b900/public" alt="ImmunoShroom Powder" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Immune</span>
+    <h4>ImmunoShroom Powder</h4>
+    <span class="price">$61.99</span>
+    <div class="actions">
+      <a class="learn" href="product-immunoshroom.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/ImmunoShroom-22444" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top cover" style="background:linear-gradient(150deg,#e7f1e1,#bcd9b0)"><span class="pill">Best seller</span><img src="https://images.pexels.com/photos/8434633/pexels-photo-8434633.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=600" alt="Real Chicken &amp; Oatmeal Recipe" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Dry Food</span>
+    <h4>Real Chicken &amp; Oatmeal Recipe</h4>
+    <span class="price">$51.99</span>
+    <div class="actions">
+      <a class="learn" href="product-chicken-oatmeal-recipe.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Real-Chicken-Oatmeal-Recipe-GM2324" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top cover" style="background:linear-gradient(150deg,#e7f1e1,#bcd9b0)"><span class="pill">Best seller</span><img src="https://images.pexels.com/photos/8434744/pexels-photo-8434744.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=600" alt="Beef Medley Superfood Seasoning" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Meal Topper</span>
+    <h4>Beef Medley Superfood Seasoning</h4>
+    <span class="price">$16.99</span>
+    <div class="actions">
+      <a class="learn" href="product-beef-seasoning-topper.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/pawPairings-Beef-Medley-Superfood-Seasoning-2405" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top cover" style="background:linear-gradient(150deg,#efe7d6,#dcc79a)"><span class="pill">Best seller</span><img src="https://images.pexels.com/photos/13382042/pexels-photo-13382042.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=600" alt="Freeze-Dried Turkey, Apples &amp; Cinnamon" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">Freeze-Dried Raw</span>
+    <h4>Freeze-Dried Turkey, Apples &amp; Cinnamon</h4>
+    <span class="price">$16.99</span>
+    <div class="actions">
+      <a class="learn" href="product-turkey-apple-kale-bites.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Freeze-Dried-Turkey-Apples-Cinnamon-2011" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div><div class="prod">
+  <div class="prod-top cover" style="background:linear-gradient(150deg,#dfeaef,#a9cdd6)"><span class="pill">Best seller</span><img src="https://images.pexels.com/photos/4432261/pexels-photo-4432261.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=600" alt="Cleansing Wipes (Aloe &amp; Chamomile)" loading="lazy" /></div>
+  <div class="prod-body">
+    <span class="tag">SPAw Line</span>
+    <h4>Cleansing Wipes (Aloe &amp; Chamomile)</h4>
+    <span class="price">$19.99</span>
+    <div class="actions">
+      <a class="learn" href="product-waterless-foam-shampoo.html">Learn more</a>
+      <a class="cart" href="https://pawtree.com/houndshearth/product/Tween-Time-Cleansing-Wipes-Aloe-Chamomile-100-count-32431" rel="nofollow noopener">Buy now</a>
+    </div>
+  </div>
+</div></div><div class="center" style="margin-top:36px"><a class="btn btn-dark" href="shop.html">Shop everything <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div></div></section>
+<section class="photoband" style="background-image:url(https://images.pexels.com/photos/6131150/pexels-photo-6131150.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900)"><div class="wrap">
+  <span class="eyebrow nolead" style="color:var(--gold)">Grooming &amp; Spa</span>
+  <h2>Spa days, right at home</h2>
+  <p>Gentle, spa-grade shampoos and ear care that keep your hound fresh, calm and healthy between professional grooms.</p>
+  <a class="btn btn-light" href="grooming.html">Explore grooming &amp; spa <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+</div></section>
+<section class="band-dark"><div class="wrap">
+  <div class="sec-head"><span class="eyebrow nolead" style="color:var(--gold)">New · AI-powered</span><h2>Meet Scout — your 24/7 dog-care advisor</h2><p>Not sure what to feed, how much, or which supplement helps? Ask Scout any time — real answers, no judgment.</p></div>
+  <div class="advisor">
+    <div class="advisor-card">
+      <div class="ai-pill"><svg class="ico" viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg> Advisor Agent · 24/7</div>
+      <h3>Talk to Scout</h3>
+      <p>Your dog-care advisor for instant, honest guidance on feeding, supplements and grooming — any time, no judgment.</p>
+      <div class="phone">(415) 792-0501</div>
+      <div class="powered">Powered by Lucrovox · Available 24/7</div>
+    </div>
+    <ul class="bullets">
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>How much should I feed a 3-year-old, 40 lb Lab?</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Which supplement helps with itching and shedding?</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Best freeze-dried treats for training a puppy?</span></li>
+      <li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>A gentle grooming routine for a double-coated breed?</span></li>
+    </ul>
+  </div>
+</div></section><section class="soft"><div class="wrap"><div class="sec-head"><span class="eyebrow">Why dog parents trust us</span><h2>Advice first, always</h2></div><div class="quotes">
+<div class="quote"><div class="stars"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></div><p>They told me exactly how much to feed my Golden and which supplement to skip. Saved me money and his coat has never looked better.</p><div class="who"><span class="av" style="background-image:url(https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=90&h=90)"></span><div><b>Sarah M.</b><span>Golden Retriever mom</span></div></div></div>
+<div class="quote"><div class="stars"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></div><p>Finally a dog site that explains things instead of just selling. The freeze-dried treats are a hit at training.</p><div class="who"><span class="av" style="background-image:url(https://images.pexels.com/photos/6291574/pexels-photo-6291574.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=90&h=90)"></span><div><b>David R.</b><span>Breeder, 3 litters/yr</span></div></div></div>
+<div class="quote"><div class="stars"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></div><p>Scout walked me through a grooming routine for my double-coat at midnight. That&#39;s how you earn a customer for life.</p><div class="who"><span class="av" style="background-image:url(https://images.pexels.com/photos/4587965/pexels-photo-4587965.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=90&h=90)"></span><div><b>Jenna L.</b><span>Husky parent</span></div></div></div>
+</div></div></section><section><div class="wrap">
+  <div class="sec-head"><span class="eyebrow">Life with a healthier dog</span><h2>Little moments, big difference</h2><p>From playful afternoons to calmer tummies and fresh-from-the-spa coats — this is what better care looks like.</p></div>
+  <div class="moments">
+    <a class="cattile" href="planner.html"><img src="https://images.pexels.com/photos/7516424/pexels-photo-7516424.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=760" alt="Playing with a happy dog"/><div class="ct"><h3>Playful &amp; thriving</h3><p>Energy and joy that good nutrition fuels.</p><span class="go">Build a plan <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a>
+    <a class="cattile" href="product-gastro-pro-plus.html"><img src="https://images.pexels.com/photos/6568950/pexels-photo-6568950.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=760" alt="Dog enjoying a healthy meal"/><div class="ct"><h3>Happy digestion</h3><p>Real food and gut support for easy tummies.</p><span class="go">Gut support <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a>
+    <a class="cattile" href="grooming.html"><img src="https://images.pexels.com/photos/6131150/pexels-photo-6131150.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=600&h=760" alt="Dog spa grooming"/><div class="ct"><h3>Spa-day fresh</h3><p>Gentle grooming that keeps coats healthy.</p><span class="go">Shop grooming <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></div></a>
+  </div>
+</div></section><section><div class="wrap"><div class="sec-head"><span class="eyebrow">Learn before you buy</span><h2>Honest dog-care guides</h2><p>Practical, no-hype guidance for real dog lovers and breeders.</p></div><div class="cards3">
+  <div class="card"><div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 0 1 2 2v13a1 1 0 0 0-1-1H5Z"/><path d="M16 5h3v13a1 1 0 0 0-1-1h-2"/></svg></div><h3>Ingredients 101</h3><p>What actually belongs in your dog&#39;s bowl — and the filler words to ignore on a label.</p><a class="more" href="guide-ingredients-101.html">Read the glossary <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+  <div class="card"><div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M4 14 14 4l6 6L10 20Z"/><path d="M8 8.5 9.5 10M11 6l1.5 1.5M14 11l1.5 1.5M11 14l1.5 1.5"/></svg></div><h3>How much to feed</h3><p>Portion sizes by weight, life stage and activity — with the vet math explained simply.</p><a class="more" href="guide-feeding.html">Read the feeding guide <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+  <div class="card"><div class="ic"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></div><h3>Do dogs need supplements?</h3><p>When a topper genuinely helps — skin, gut, joints, dental — and when it doesn&#39;t.</p><a class="more" href="guide-supplements.html">Read the supplement guide <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+</div></div></section><section><div class="wrap"><div class="capture">
+  <span class="eyebrow">Free download</span>
+  <h2>Get the Honest Dog Nutrition Guide</h2>
+  <p>What&#39;s actually worth buying, how much your dog needs, and how to avoid overpaying. Drop your email and get it instantly — plus the occasional honest tip. No spam, unsubscribe anytime.</p>
+  <form name="guide-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-capture action="/thank-you.html">
+    <input type="hidden" name="form-name" value="guide-signup" />
+    <input type="hidden" name="source" value="Hound&#39;s Hearth website — Guide signup" />
+    <p style="display:none"><label>Don&#39;t fill this: <input name="bot-field" /></label></p>
+    <input type="email" name="email" placeholder="you@email.com" required />
+    <button class="btn btn-primary" type="submit">Get the guide</button>
+  </form>
+  <small data-note>Join 2,000+ pet families — across our Thrive Freeze &amp; Hound&#39;s Hearth family.</small>
+</div></div></section>
+
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="logo"><span class="mk"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span> Hound&#39;s Hearth</div>
+      <p>Honest, independent guidance on dog nutrition, treats, supplements and grooming — helping dog lovers and breeders care for their pack with confidence.</p>
+      <div class="socials"><a href="#" aria-label="Instagram"><svg class="ico" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="Facebook"><svg class="ico" viewBox="0 0 24 24"><path d="M14 8h2V5h-2.5C12 5 11 6.2 11 8v2H9v3h2v6h3v-6h2.2l.8-3H14V8.5c0-.3.2-.5.5-.5Z"/></svg></a><a href="#" aria-label="YouTube"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="m10 9.5 5 2.5-5 2.5Z" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="TikTok"><svg class="ico" viewBox="0 0 24 24"><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17V7l10-2v10"/></svg></a></div>
+    </div>
+    <div><h5>Shop</h5><ul>
+      <li><a href="food.html">Food &amp; Toppers</a></li>
+      <li><a href="treats.html">Treats</a></li>
+      <li><a href="supplements.html">Supplements</a></li>
+      <li><a href="grooming.html">Grooming &amp; Spa</a></li>
+      <li><a href="shop.html">Shop all products</a></li>
+    </ul></div>
+    <div><h5>Learn</h5><ul>
+      <li><a href="planner.html">Dog Planner</a></li>
+      <li><a href="solutions.html">Solutions by symptom</a></li>
+      <li><a href="guides.html">Care guides</a></li>
+      <li><a href="guide-ingredients-101.html">Ingredients 101</a></li>
+      <li><a href="advisor.html">Ask Scout (AI)</a></li>
+    </ul></div>
+    <div><h5>Company</h5><ul>
+      <li><a href="about.html">About us</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="shipping.html">Shipping &amp; Returns</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="https://pawtree.com/houndshearth/enrollment" rel="nofollow noopener">Partner with us</a></li>
+    </ul></div>
+    <div><h5>Legal</h5><ul>
+      <li><a href="affiliate-disclosure.html">Affiliate disclosure</a></li>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="terms.html">Terms of use</a></li>
+    </ul></div>
+  </div>
+  <div class="disclosure">
+    Hound&#39;s Hearth is an independent advisor and affiliate partner. We may earn a commission on qualifying purchases made through our links, at no extra cost to you. Product availability, pricing, fulfillment and shipping are handled by our supply partners. Information on this site is educational and is not veterinary advice — always consult your veterinarian about your individual dog&#39;s diet and health.
+    <div class="row"><span>© <span data-year>2026</span> Hound&#39;s Hearth. All rights reserved.</span><span>Made with care for dogs &amp; the people who love them.</span></div>
+  </div>
+</div></footer>
+<div class="ppop" id="ppop" aria-hidden="true">
+  <div class="ppop-card">
+    <button class="ppop-x" id="ppop-x" aria-label="Close">&times;</button>
+    <div class="ppop-media"><img src="https://images.pexels.com/photos/18056082/pexels-photo-18056082.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=760&h=900" alt="A happy, healthy dog" loading="lazy"/></div>
+    <div class="ppop-body">
+      <div class="ppop-form-wrap" id="ppop-form-wrap">
+        <span class="ppop-eyebrow">New customer offer</span>
+        <h2>Get 20% off your first order</h2>
+        <p>On orders over $100. Pop in your name and email and we&#39;ll unlock your code instantly.</p>
+        <form name="popup-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="ppop-form">
+          <input type="hidden" name="form-name" value="popup-signup" />
+          <input type="hidden" name="source" value="Hound&#39;s Hearth website — Popup offer" />
+          <p style="display:none"><label>Skip: <input name="bot-field" /></label></p>
+          <input type="text" name="name" placeholder="Your name" required />
+          <input type="email" name="email" placeholder="you@email.com" required />
+          <button class="btn btn-primary" type="submit">Reveal my code</button>
+        </form>
+        <small class="ppop-fine">No spam, unsubscribe anytime. <a id="ppop-details" href="https://pawtree.com/Content/pdf/New%20Customer%20Discounts%20(1).pdf%20(1).pdf">Offer details</a></small>
+      </div>
+      <div class="ppop-success" id="ppop-success">
+        <span class="ppop-eyebrow">You&#39;re in</span>
+        <h2>Here&#39;s your code</h2>
+        <div class="ppop-code" id="ppop-code">INTRO4U20</div>
+        <button class="btn btn-ghost ppop-copy" id="ppop-copy">Copy code</button>
+        <p class="ppop-terms">20% off orders over $100. <a id="ppop-details2" href="https://pawtree.com/Content/pdf/New%20Customer%20Discounts%20(1).pdf%20(1).pdf">See details</a></p>
+        <a class="btn btn-primary" href="shop.html">Start shopping <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="scout-widget">
+  <div class="scout-panel" id="scout-panel">
+    <div class="scout-head"><span class="scout-ai"><svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg> Advisor Agent · 24/7</span><button class="scout-x" id="scout-x" aria-label="Close">&times;</button></div>
+    <h4>Talk to Scout</h4>
+    <p>Scout is your dog-care advisor — honest, instant answers about food, supplements and grooming, any time you need them.</p>
+    <a class="btn btn-primary" href="tel:+14157920501">Call Scout · (415) 792-0501</a>
+    <div class="scout-powered">Powered by Lucrovox · Available 24/7</div>
+  </div>
+  <button class="scout-fab" id="scout-fab" aria-label="Ask Scout"><svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg><span>Ask Scout</span></button>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>

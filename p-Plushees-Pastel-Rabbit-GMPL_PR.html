@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plushees - Pastel Rabbit — Hound's Hearth</title>
+<meta name="description" content="Plushees - Pastel Rabbit" />
+<meta property="og:title" content="Plushees - Pastel Rabbit — Hound's Hearth" />
+<meta property="og:description" content="Plushees - Pastel Rabbit" />
+<meta property="og:type" content="website" />
+<!--
+=========================================================================
+  Hound's Hearth — Tracking & Attribution Snippet  (IDs FILLED IN)
+=========================================================================
+  Paste this entire block INSIDE the <head>...</head> of every page.
+  All 4 IDs are already filled in below:
+    GA4 Measurement ID:        G-SE5HXBZHWF
+       (Property "Hound's Hearth" under account 156931159
+        "Thrive Freeze Dried Food", info@thrivefreeze.com)
+    Microsoft UET Tag ID:      211075480
+       (Tag "Hound's Hearth" in MS Ads sandeepdar@hotmail.com)
+    Google Ads Conversion ID:  AW-11033587773
+       (Account 678-202-0572, info@thrivefreeze.com)
+    Google Ads Conv. Label:    JJn0CNDhlMYcEL3gnI0p
+       (Conversion action "Houndshearth - Outbound to PawTree",
+        category Purchase, value $1.50/click)
+=========================================================================
+-->
+<!-- ===== 1. Google Tag (GA4 + Google Ads, single loader) ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SE5HXBZHWF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  // GA4 property (Hound's Hearth, account 156931159)
+  gtag('config', 'G-SE5HXBZHWF', {
+    send_page_view: true,
+    anonymize_ip: true
+  });
+  // Google Ads account 678-202-0572 (linked to the same gtag.js loader)
+  gtag('config', 'AW-11033587773');
+</script>
+<!-- ===== 2. Microsoft UET (Bing/MS Ads) ===== -->
+<script>
+  (function(w,d,t,r,u){
+    var f,n,i; w[u]=w[u]||[], f=function(){
+      var o={ti:"211075480", enableAutoSpaTracking:true};
+      o.q=w[u], w[u]=new UET(o), w[u].push("pageLoad");
+    }, n=d.createElement(t), n.src=r, n.async=1,
+       n.onload=n.onreadystatechange=function(){
+         var s=this.readyState; s && s!=="loaded" && s!=="complete" || (f(),n.onload=n.onreadystatechange=null);
+       }, i=d.getElementsByTagName(t)[0], i.parentNode.insertBefore(n,i);
+  })(window,document,"script","//bat.bing.com/bat.js","uetq");
+</script>
+<!-- ===== 3. Click-ID capture + PawTree link decoration + outbound tracking ===== -->
+<script>
+(function () {
+  // ---- a) Capture gclid (Google) & msclkid (Microsoft) into localStorage on landing ----
+  //         so a visitor who clicks the ad, browses 3 pages, THEN clicks Buy now
+  //         still carries the original click ID to PawTree.
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var gclid  = params.get('gclid');
+    var msclkid = params.get('msclkid');
+    if (gclid)   localStorage.setItem('hh_gclid',   JSON.stringify({ v: gclid,   t: Date.now() }));
+    if (msclkid) localStorage.setItem('hh_msclkid', JSON.stringify({ v: msclkid, t: Date.now() }));
+  } catch (e) {}
+  // Read a click ID that is no older than 30 days
+  function readClickId(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+      if (!obj || !obj.v || (Date.now() - obj.t) > THIRTY_DAYS) return null;
+      return obj.v;
+    } catch (e) { return null; }
+  }
+  // ---- b) Decorate every PawTree link with the stored click IDs ----
+  //         PawTree will then echo these back to you in the affiliate report,
+  //         which is what lets you match a Google/MS Ads click to an actual sale.
+  function decorate(a) {
+    try {
+      if (!a || !a.href || !/(^|\.)pawtree\.com/i.test(a.hostname)) return;
+      var u = new URL(a.href);
+      var g = readClickId('hh_gclid');
+      var m = readClickId('hh_msclkid');
+      if (g && !u.searchParams.has('gclid'))   u.searchParams.set('gclid', g);
+      if (m && !u.searchParams.has('msclkid')) u.searchParams.set('msclkid', m);
+      // tag every outbound for analytics — handy for filtering in PawTree reports
+      if (!u.searchParams.has('utm_source')) u.searchParams.set('utm_source', 'houndshearth');
+      if (!u.searchParams.has('utm_medium')) u.searchParams.set('utm_medium', 'affiliate');
+      a.href = u.toString();
+    } catch (e) {}
+  }
+  // Run on initial load + whenever DOM changes (covers SPA-rendered cards)
+  function decorateAll() {
+    document.querySelectorAll('a[href*="pawtree.com"]').forEach(decorate);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', decorateAll);
+  } else {
+    decorateAll();
+  }
+  // Re-run on DOM mutations (debounced)
+  var mutTimer = null;
+  new MutationObserver(function () {
+    clearTimeout(mutTimer);
+    mutTimer = setTimeout(decorateAll, 100);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  // ---- c) Fire conversion events on click / aux-click / mousedown ----
+  //         mousedown catches middle-click + Cmd-click "open in new tab" cases
+  //         where the user never returns to dispatch a normal click.
+  function fireOutboundConversion(a) {
+    if (!a || !a.href) return;
+    var host;
+    try { host = new URL(a.href).hostname; } catch (e) { return; }
+    if (!/(^|\.)pawtree\.com/i.test(host)) return;
+    // Try to pull product info from the URL or the surrounding card
+    var match = (a.href || '').match(/\/product\/([^/?#]+)/);
+    var productSlug = match ? match[1] : '';
+    var productName = (a.closest('[data-product-name]') || {}).dataset
+                      ? a.closest('[data-product-name]').dataset.productName
+                      : '';
+    // ---- GA4 event (will be marked as Key Event in GA4 → Admin → Events) ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'outbound_click', {
+        link_domain: host,
+        link_url: a.href,
+        link_text: (a.textContent || '').trim().slice(0, 60),
+        product_slug: productSlug,
+        product_name: productName
+      });
+    }
+    // ---- Google Ads conversion ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-11033587773/JJn0CNDhlMYcEL3gnI0p',
+        value: 1.5,
+        currency: 'USD',
+        transaction_id: productSlug + '_' + Date.now()
+      });
+    }
+    // ---- Microsoft UET goal ----
+    if (window.uetq && typeof window.uetq.push === 'function') {
+      window.uetq.push('event', 'outbound_click', {
+        event_category: 'affiliate',
+        event_label: host,
+        event_value: 1
+      });
+    }
+  }
+  // Attach listeners with capture:true so we run BEFORE the link navigates away
+  ['mousedown', 'click', 'auxclick'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      // re-decorate at the moment of click in case the link was just added
+      decorate(a);
+      fireOutboundConversion(a);
+    }, true);
+  });
+})();
+</script>
+
+<link rel="icon" href="img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://images.pexels.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">Trusted by 2,000+ pet families across the Thrive Freeze &amp; Hound&#39;s Hearth family — honest advice you can act on. <strong>Ask Scout 24/7: (415) 792-0501</strong></div>
+<nav><div class="nav-inner">
+  <a class="logo" href="index.html"><span class="mk"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span><span>Hound&#39;s Hearth<small>Dog Nutrition &amp; Care</small></span></a>
+  <div class="nav-links" id="navlinks">
+    <div class="has-drop"><a href="shop.html">Shop</a>
+      <div class="drop">
+        <a href="food.html"><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg> Food &amp; Toppers</a>
+        <a href="treats.html"><svg class="ico" viewBox="0 0 24 24"><path d="M7 9.5a2.2 2.2 0 1 0-2-2.6 2.2 2.2 0 1 0 .4 3.4l9.2 5.3a2.2 2.2 0 1 0 2 2.6 2.2 2.2 0 1 0-.4-3.4Z"/></svg> Treats</a>
+        <a href="supplements.html"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg> Supplements</a>
+        <a href="grooming.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10.5A6 6 0 0 1 6 13.5C6 10 9 7 12 3Z"/></svg> Grooming &amp; Spa</a>
+        <a href="seasonings.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg> Seasonings</a>
+        <a href="toys.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z"/></svg> Toys</a>
+        <a href="sets.html"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg> Solution Sets</a>
+        <a href="shop.html"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg> Shop everything</a>
+      </div>
+    </div>
+    <a href="solutions.html">Solutions</a>
+    <a href="planner.html">Dog Planner</a>
+    <a href="advisor.html">Ask Scout</a>
+    <a href="guides.html">Guides</a>
+    <a href="about.html">About</a>
+  </div>
+  <div class="nav-cta">
+    <a class="btn btn-primary btn-sm" href="shop.html">Shop the store <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+    <button class="burger" aria-label="Menu"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</div></nav>
+
+<div class="phead"><div class="wrap"><div class="crumb"><a href="index.html">Home</a> / <a href="toys.html">Toys</a> / Plushees - Pastel Rabbit</div></div></div>
+<section style="padding-top:40px"><div class="wrap" style="display:grid;grid-template-columns:1fr 1.05fr;gap:50px;align-items:start">
+  <div class="gallery"><div class="gmain"><img id="gmain-img" src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/77f3351b-c303-43a2-10a9-8238d4e73c00/public" alt="Plushees - Pastel Rabbit"/></div><div class="gthumbs"><button class="gthumb on" data-src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/77f3351b-c303-43a2-10a9-8238d4e73c00/public" data-fit="contain"><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/77f3351b-c303-43a2-10a9-8238d4e73c00/public" alt="" loading="lazy"/></button><button class="gthumb" data-src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/ad6fe6d9-1e4a-4701-295f-96cf6e808100/public" data-fit="contain"><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/ad6fe6d9-1e4a-4701-295f-96cf6e808100/public" alt="" loading="lazy"/></button><button class="gthumb" data-src="https://images.pexels.com/photos/5860105/pexels-photo-5860105.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=700&h=700" data-fit="cover"><img src="https://images.pexels.com/photos/5860105/pexels-photo-5860105.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=700&h=700" alt="" loading="lazy"/></button></div></div>
+  <div>
+    <span class="eyebrow">Toys</span>
+    <h1 style="font-size:2.1rem;margin:.4rem 0">Plushees - Pastel Rabbit</h1>
+    <a class="revlink" href="https://pawtree.com/houndshearth/product/Plushees-Pastel-Rabbit-GMPL_PR"><svg class="ico" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg> See verified buyer reviews</a>
+    <p class="muted" style="font-size:1.05rem">A toys pick from the trusted line we feature, made with real, named ingredients and honest value. See the full ingredient list, sizes and verified reviews on our store, then have it shipped to your door.</p>
+    <div style="font-family:'Lora',serif;font-size:1.9rem;margin:1rem 0">$15.99 - $22.99</div>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1.3rem">
+      <a class="btn btn-primary" href="https://pawtree.com/houndshearth/product/Plushees-Pastel-Rabbit-GMPL_PR" rel="nofollow noopener">Buy now <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn-ghost" href="https://pawtree.com/houndshearth/product/Plushees-Pastel-Rabbit-GMPL_PR" rel="nofollow noopener">Ingredients &amp; reviews</a>
+    </div>
+    <ul class="split-list"><li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Real, named ingredients — no mystery fillers</span></li><li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Vet &amp; PhD-informed formulas</span></li><li><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg><span>Fast, tracked shipping from our trusted partner</span></li></ul>
+    <p class="muted" style="font-size:.82rem;margin-top:1rem">Fulfilled by our trusted supply partner. We may earn a commission — at no extra cost to you. Always consult your veterinarian about your dog&#39;s individual needs.</p>
+  </div>
+</div></section>
+<section class="soft"><div class="wrap"><div class="sec-head"><span class="eyebrow nolead">More in Toys</span><h2>You might also like</h2></div><div class="prod-grid g3"><div class="prod"><a class="prod-top contain" href="p-Rub-A-Dub-Tubby-Toy-Hide-N-Seek-toy-2353.html"><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/3ad33096-406a-4c81-dfbd-fdbafe8b3b00/public" alt="Rub A Dub Tubby Toy (Hide N Seek)" loading="lazy"/></a><div class="prod-body"><span class="tag">Toys</span><h4>Rub A Dub Tubby Toy (Hide N Seek)</h4><span class="price">$21.99</span><div class="actions"><a class="learn" href="p-Rub-A-Dub-Tubby-Toy-Hide-N-Seek-toy-2353.html">Learn more</a><a class="cart" href="https://pawtree.com/houndshearth/product/Rub-A-Dub-Tubby-Toy-Hide-N-Seek-toy-2353" rel="nofollow noopener">Buy now</a></div></div></div><div class="prod"><a class="prod-top contain" href="p-Baby-Reed-The-Panda-10-2543.html"><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/8abb090b-2427-45a3-4014-b38bf96a8000/public" alt="Playful Pairs - Baby Reed The Panda" loading="lazy"/></a><div class="prod-body"><span class="tag">Toys</span><h4>Playful Pairs - Baby Reed The Panda</h4><span class="price">$17.99</span><div class="actions"><a class="learn" href="p-Baby-Reed-The-Panda-10-2543.html">Learn more</a><a class="cart" href="https://pawtree.com/houndshearth/product/Baby-Reed-The-Panda-10-2543" rel="nofollow noopener">Buy now</a></div></div></div><div class="prod"><a class="prod-top contain" href="p-Baby-Merle-The-Squirrel-10-2546.html"><img src="https://imagedelivery.net/ErnLq8dzzMZmXNdJfHMsSg/4bb4f63f-94c0-4d93-73d9-a0b60b9b2600/public" alt="Playful Pairs - Baby Merle The Squirrel" loading="lazy"/></a><div class="prod-body"><span class="tag">Toys</span><h4>Playful Pairs - Baby Merle The Squirrel</h4><span class="price">$17.99</span><div class="actions"><a class="learn" href="p-Baby-Merle-The-Squirrel-10-2546.html">Learn more</a><a class="cart" href="https://pawtree.com/houndshearth/product/Baby-Merle-The-Squirrel-10-2546" rel="nofollow noopener">Buy now</a></div></div></div></div></div></section>
+
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <div class="logo"><span class="mk"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span> Hound&#39;s Hearth</div>
+      <p>Honest, independent guidance on dog nutrition, treats, supplements and grooming — helping dog lovers and breeders care for their pack with confidence.</p>
+      <div class="socials"><a href="#" aria-label="Instagram"><svg class="ico" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="Facebook"><svg class="ico" viewBox="0 0 24 24"><path d="M14 8h2V5h-2.5C12 5 11 6.2 11 8v2H9v3h2v6h3v-6h2.2l.8-3H14V8.5c0-.3.2-.5.5-.5Z"/></svg></a><a href="#" aria-label="YouTube"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="m10 9.5 5 2.5-5 2.5Z" fill="currentColor" stroke="none"/></svg></a><a href="#" aria-label="TikTok"><svg class="ico" viewBox="0 0 24 24"><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17V7l10-2v10"/></svg></a></div>
+    </div>
+    <div><h5>Shop</h5><ul>
+      <li><a href="food.html">Food &amp; Toppers</a></li>
+      <li><a href="treats.html">Treats</a></li>
+      <li><a href="supplements.html">Supplements</a></li>
+      <li><a href="grooming.html">Grooming &amp; Spa</a></li>
+      <li><a href="shop.html">Shop all products</a></li>
+    </ul></div>
+    <div><h5>Learn</h5><ul>
+      <li><a href="planner.html">Dog Planner</a></li>
+      <li><a href="solutions.html">Solutions by symptom</a></li>
+      <li><a href="guides.html">Care guides</a></li>
+      <li><a href="guide-ingredients-101.html">Ingredients 101</a></li>
+      <li><a href="advisor.html">Ask Scout (AI)</a></li>
+    </ul></div>
+    <div><h5>Company</h5><ul>
+      <li><a href="about.html">About us</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="shipping.html">Shipping &amp; Returns</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="https://pawtree.com/houndshearth/enrollment" rel="nofollow noopener">Partner with us</a></li>
+    </ul></div>
+    <div><h5>Legal</h5><ul>
+      <li><a href="affiliate-disclosure.html">Affiliate disclosure</a></li>
+      <li><a href="privacy.html">Privacy policy</a></li>
+      <li><a href="terms.html">Terms of use</a></li>
+    </ul></div>
+  </div>
+  <div class="disclosure">
+    Hound&#39;s Hearth is an independent advisor and affiliate partner. We may earn a commission on qualifying purchases made through our links, at no extra cost to you. Product availability, pricing, fulfillment and shipping are handled by our supply partners. Information on this site is educational and is not veterinary advice — always consult your veterinarian about your individual dog&#39;s diet and health.
+    <div class="row"><span>© <span data-year>2026</span> Hound&#39;s Hearth. All rights reserved.</span><span>Made with care for dogs &amp; the people who love them.</span></div>
+  </div>
+</div></footer>
+<div class="ppop" id="ppop" aria-hidden="true">
+  <div class="ppop-card">
+    <button class="ppop-x" id="ppop-x" aria-label="Close">&times;</button>
+    <div class="ppop-media"><img src="https://images.pexels.com/photos/18056082/pexels-photo-18056082.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=760&h=900" alt="A happy, healthy dog" loading="lazy"/></div>
+    <div class="ppop-body">
+      <div class="ppop-form-wrap" id="ppop-form-wrap">
+        <span class="ppop-eyebrow">New customer offer</span>
+        <h2>Get 20% off your first order</h2>
+        <p>On orders over $100. Pop in your name and email and we&#39;ll unlock your code instantly.</p>
+        <form name="popup-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="ppop-form">
+          <input type="hidden" name="form-name" value="popup-signup" />
+          <input type="hidden" name="source" value="Hound&#39;s Hearth website — Popup offer" />
+          <p style="display:none"><label>Skip: <input name="bot-field" /></label></p>
+          <input type="text" name="name" placeholder="Your name" required />
+          <input type="email" name="email" placeholder="you@email.com" required />
+          <button class="btn btn-primary" type="submit">Reveal my code</button>
+        </form>
+        <small class="ppop-fine">No spam, unsubscribe anytime. <a id="ppop-details" href="https://pawtree.com/Content/pdf/New%20Customer%20Discounts%20(1).pdf%20(1).pdf">Offer details</a></small>
+      </div>
+      <div class="ppop-success" id="ppop-success">
+        <span class="ppop-eyebrow">You&#39;re in</span>
+        <h2>Here&#39;s your code</h2>
+        <div class="ppop-code" id="ppop-code">INTRO4U20</div>
+        <button class="btn btn-ghost ppop-copy" id="ppop-copy">Copy code</button>
+        <p class="ppop-terms">20% off orders over $100. <a id="ppop-details2" href="https://pawtree.com/Content/pdf/New%20Customer%20Discounts%20(1).pdf%20(1).pdf">See details</a></p>
+        <a class="btn btn-primary" href="shop.html">Start shopping <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="scout-widget">
+  <div class="scout-panel" id="scout-panel">
+    <div class="scout-head"><span class="scout-ai"><svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg> Advisor Agent · 24/7</span><button class="scout-x" id="scout-x" aria-label="Close">&times;</button></div>
+    <h4>Talk to Scout</h4>
+    <p>Scout is your dog-care advisor — honest, instant answers about food, supplements and grooming, any time you need them.</p>
+    <a class="btn btn-primary" href="tel:+14157920501">Call Scout · (415) 792-0501</a>
+    <div class="scout-powered">Powered by Lucrovox · Available 24/7</div>
+  </div>
+  <button class="scout-fab" id="scout-fab" aria-label="Ask Scout"><svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg><span>Ask Scout</span></button>
+</div>
+<script src="js/main.js"></script>
+</body>
+</html>

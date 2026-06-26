@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+_src/
+build*.py
+patch*.py
+catalog*.json
+catalog_rich.json
+rich*.json
+codes.js
+_ads_head.html
+*.zip
+.DS_Store
