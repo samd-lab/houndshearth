@@ -454,3 +454,6 @@ footer a:hover{color:var(--gold)}
 .ppop-terms{font-size:.82rem;color:var(--ink-soft);margin-bottom:1.1rem}
 .ppop-success .btn-primary{width:100%;justify-content:center}
 @media(max-width:620px){.ppop-card{grid-template-columns:1fr;max-width:380px}.ppop-media{min-height:140px;max-height:150px}.ppop-body{padding:26px 22px}.ppop-body h2{font-size:1.5rem}}
+
+/* small consent line under signup forms */
+.form-consent{display:block;margin-top:.55rem;font-size:.68rem;line-height:1.4;color:var(--ink-soft);opacity:.8}
