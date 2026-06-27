@@ -11,3 +11,8 @@ _ads_head.html
 *.zip
 .DS_Store
 img/scout-avatar.jpg
+_partners.css
+_partners.js
+_ovtest.txt
+_padtest.txt
+_writetest.txt
