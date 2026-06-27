@@ -393,6 +393,12 @@ select.ovl-in-f{cursor:pointer}
  .flip-back{display:none}
  .flip::after{display:none}
 }
+.segpick{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.segpick-l{font-size:.8rem;color:rgba(255,255,255,.62);margin-right:.15rem;font-weight:600}
+.segchip{font-size:.82rem;padding:.34rem .8rem;border-radius:999px;border:1px solid rgba(255,255,255,.26);color:rgba(255,255,255,.86);background:rgba(255,255,255,.06);cursor:pointer;transition:.15s;white-space:nowrap}
+.segchip:hover{border-color:var(--gold-soft);color:#fff}
+.segchip.on{background:var(--gold);color:#2a1a08;border-color:var(--gold);font-weight:700}
+@media(max-width:560px){.segpick{gap:.35rem}.segchip{font-size:.77rem;padding:.3rem .62rem}}
 </style>
 </head>
 <body>
@@ -407,6 +413,7 @@ select.ovl-in-f{cursor:pointer}
 <section class="phero" style="padding:0">
  <div class="wrap"><div class="phero-grid">
    <div class="phero-text">
+     <div class="segpick" id="segpick"><span class="segpick-l">I&#39;m a…</span><a class="segchip" data-type="groomer" href="?type=groomer">Groomer</a><a class="segchip" data-type="breeder" href="?type=breeder">Breeder</a><a class="segchip" data-type="trainer" href="?type=trainer">Trainer</a><a class="segchip" data-type="influencer" href="?type=influencer">Influencer</a><a class="segchip" data-type="rescue" href="?type=rescue">Rescue</a><a class="segchip" data-type="retail" href="?type=retail">Pet business</a></div>
      <span class="eyebrow" data-seg="eyebrow">Hound&#39;s Hearth Partner Network</span>
      <h1 data-seg="h1">Build a Pet-Wellness Business You&#39;re <em>Proud</em> Of</h1>
      <p class="lead">Recommend premium dog products that actually fix problems — itchy skin, sensitive stomachs, low immunity, stiff joints — and earn some of the highest commissions in the industry. No inventory, no startup cost.</p>
@@ -559,20 +566,35 @@ select.ovl-in-f{cursor:pointer}
         return TYPES.indexOf(t)>-1 ? t : 'default'; }catch(e){ return 'default'; }
  }
  var type = qtype();
- if(type!=='default'){
-   var s = SEG[type];
+
+ function setActiveChip(t){
+   var chips=document.querySelectorAll('.segchip');
+   chips.forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-type')===t); });
+ }
+ function applySeg(t){
+   var s = SEG[t]; if(!s) return;
+   type = t;
    document.querySelectorAll('[data-seg]').forEach(function(el){
-     var k = el.getAttribute('data-seg');
-     if(s[k]!=null) el.innerHTML = s[k];
+     var k = el.getAttribute('data-seg'); if(s[k]!=null) el.innerHTML = s[k];
    });
    if(s.mTitle) document.title = s.mTitle.replace(/&#39;/g,"'");
-   var hi = document.getElementById('hero-img');
-   if(hi && s.imgUrl) hi.src = s.imgUrl;
-   var ms = document.getElementById('seg-media');
-   if(ms && s.imgUrl) ms.src = s.imgUrl;
-   var ab = document.getElementById('aud-bullets');
-   if(ab && s.bulletsHtml) ab.innerHTML = s.bulletsHtml;
+   var hi=document.getElementById('hero-img'); if(hi && s.imgUrl) hi.src=s.imgUrl;
+   var ms=document.getElementById('seg-media'); if(ms && s.imgUrl) ms.src=s.imgUrl;
+   var ab=document.getElementById('aud-bullets'); if(ab && s.bulletsHtml) ab.innerHTML=s.bulletsHtml;
+   var rsel=document.getElementById('pf-role'); if(rsel && ROLEMAP[t]) rsel.value=ROLEMAP[t];
+   setActiveChip(t);
  }
+ if(type!=='default') applySeg(type); else setActiveChip('');
+
+ // "I'm a…" selector: live switch, no reload, keep URL in sync for attribution
+ document.querySelectorAll('.segchip').forEach(function(c){
+   c.addEventListener('click',function(e){
+     e.preventDefault();
+     var t=c.getAttribute('data-type');
+     applySeg(t);
+     try{ var u=new URL(location.href); u.searchParams.set('type',t); history.replaceState(null,'',u); }catch(err){}
+   });
+ });
 
  function readCid(key){
    try{ var raw=localStorage.getItem(key); if(!raw) return null;
@@ -610,7 +632,6 @@ select.ovl-in-f{cursor:pointer}
      var el=document.getElementById(s); if(el) el.hidden=(s!==id);
    });
  }
- // scroll to the inline form (CTAs throughout the page point here)
  function openForm(){
    var rsel=document.getElementById('pf-role');
    if(rsel && ROLEMAP[type] && !rsel.value) rsel.value=ROLEMAP[type];
