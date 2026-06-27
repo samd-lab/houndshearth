@@ -1,0 +1,563 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Hound&#39;s Hearth Partner Network</title>
+<meta name="description" content="Join the Hound&#39;s Hearth Partner Network. Premium pet-wellness products powered by pawTree — earn commissions with marketing support and no inventory." />
+<meta property="og:title" content="Hound&#39;s Hearth Partner Network" />
+<meta property="og:description" content="Join the Hound&#39;s Hearth Partner Network. Premium pet-wellness products powered by pawTree — earn commissions with marketing support and no inventory." />
+<meta property="og:type" content="website" />
+<!--
+=========================================================================
+  Hound's Hearth — Tracking & Attribution Snippet  (IDs FILLED IN)
+=========================================================================
+  Paste this entire block INSIDE the <head>...</head> of every page.
+  All 4 IDs are already filled in below:
+    GA4 Measurement ID:        G-SE5HXBZHWF
+       (Property "Hound's Hearth" under account 156931159
+        "Thrive Freeze Dried Food", info@thrivefreeze.com)
+    Microsoft UET Tag ID:      211075480
+       (Tag "Hound's Hearth" in MS Ads sandeepdar@hotmail.com)
+    Google Ads Conversion ID:  AW-11033587773
+       (Account 678-202-0572, info@thrivefreeze.com)
+    Google Ads Conv. Label:    JJn0CNDhlMYcEL3gnI0p
+       (Conversion action "Houndshearth - Outbound to PawTree",
+        category Purchase, value $1.50/click)
+=========================================================================
+-->
+<!-- ===== 1. Google Tag (GA4 + Google Ads, single loader) ===== -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SE5HXBZHWF"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  // GA4 property (Hound's Hearth, account 156931159)
+  gtag('config', 'G-SE5HXBZHWF', {
+    send_page_view: true,
+    anonymize_ip: true
+  });
+  // Google Ads account 678-202-0572 (linked to the same gtag.js loader)
+  gtag('config', 'AW-11033587773');
+</script>
+<!-- ===== 2. Microsoft UET (Bing/MS Ads) ===== -->
+<script>
+  (function(w,d,t,r,u){
+    var f,n,i; w[u]=w[u]||[], f=function(){
+      var o={ti:"211075480", enableAutoSpaTracking:true};
+      o.q=w[u], w[u]=new UET(o), w[u].push("pageLoad");
+    }, n=d.createElement(t), n.src=r, n.async=1,
+       n.onload=n.onreadystatechange=function(){
+         var s=this.readyState; s && s!=="loaded" && s!=="complete" || (f(),n.onload=n.onreadystatechange=null);
+       }, i=d.getElementsByTagName(t)[0], i.parentNode.insertBefore(n,i);
+  })(window,document,"script","//bat.bing.com/bat.js","uetq");
+</script>
+<!-- ===== 3. Click-ID capture + PawTree link decoration + outbound tracking ===== -->
+<script>
+(function () {
+  // ---- a) Capture gclid (Google) & msclkid (Microsoft) into localStorage on landing ----
+  //         so a visitor who clicks the ad, browses 3 pages, THEN clicks Buy now
+  //         still carries the original click ID to PawTree.
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var gclid  = params.get('gclid');
+    var msclkid = params.get('msclkid');
+    if (gclid)   localStorage.setItem('hh_gclid',   JSON.stringify({ v: gclid,   t: Date.now() }));
+    if (msclkid) localStorage.setItem('hh_msclkid', JSON.stringify({ v: msclkid, t: Date.now() }));
+  } catch (e) {}
+  // Read a click ID that is no older than 30 days
+  function readClickId(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      var obj = JSON.parse(raw);
+      var THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+      if (!obj || !obj.v || (Date.now() - obj.t) > THIRTY_DAYS) return null;
+      return obj.v;
+    } catch (e) { return null; }
+  }
+  // ---- b) Decorate every PawTree link with the stored click IDs ----
+  //         PawTree will then echo these back to you in the affiliate report,
+  //         which is what lets you match a Google/MS Ads click to an actual sale.
+  function decorate(a) {
+    try {
+      if (!a || !a.href || !/(^|\.)pawtree\.com/i.test(a.hostname)) return;
+      var u = new URL(a.href);
+      var g = readClickId('hh_gclid');
+      var m = readClickId('hh_msclkid');
+      if (g && !u.searchParams.has('gclid'))   u.searchParams.set('gclid', g);
+      if (m && !u.searchParams.has('msclkid')) u.searchParams.set('msclkid', m);
+      // tag every outbound for analytics — handy for filtering in PawTree reports
+      if (!u.searchParams.has('utm_source')) u.searchParams.set('utm_source', 'houndshearth');
+      if (!u.searchParams.has('utm_medium')) u.searchParams.set('utm_medium', 'affiliate');
+      a.href = u.toString();
+    } catch (e) {}
+  }
+  // Run on initial load + whenever DOM changes (covers SPA-rendered cards)
+  function decorateAll() {
+    document.querySelectorAll('a[href*="pawtree.com"]').forEach(decorate);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', decorateAll);
+  } else {
+    decorateAll();
+  }
+  // Re-run on DOM mutations (debounced)
+  var mutTimer = null;
+  new MutationObserver(function () {
+    clearTimeout(mutTimer);
+    mutTimer = setTimeout(decorateAll, 100);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+  // ---- c) Fire conversion events on click / aux-click / mousedown ----
+  //         mousedown catches middle-click + Cmd-click "open in new tab" cases
+  //         where the user never returns to dispatch a normal click.
+  function fireOutboundConversion(a) {
+    if (!a || !a.href) return;
+    var host;
+    try { host = new URL(a.href).hostname; } catch (e) { return; }
+    if (!/(^|\.)pawtree\.com/i.test(host)) return;
+    // Try to pull product info from the URL or the surrounding card
+    var match = (a.href || '').match(/\/product\/([^/?#]+)/);
+    var productSlug = match ? match[1] : '';
+    var productName = (a.closest('[data-product-name]') || {}).dataset
+                      ? a.closest('[data-product-name]').dataset.productName
+                      : '';
+    // ---- GA4 event (will be marked as Key Event in GA4 → Admin → Events) ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'outbound_click', {
+        link_domain: host,
+        link_url: a.href,
+        link_text: (a.textContent || '').trim().slice(0, 60),
+        product_slug: productSlug,
+        product_name: productName
+      });
+    }
+    // ---- Google Ads conversion ----
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-11033587773/JJn0CNDhlMYcEL3gnI0p',
+        value: 1.5,
+        currency: 'USD',
+        transaction_id: productSlug + '_' + Date.now()
+      });
+    }
+    // ---- Microsoft UET goal ----
+    if (window.uetq && typeof window.uetq.push === 'function') {
+      window.uetq.push('event', 'outbound_click', {
+        event_category: 'affiliate',
+        event_label: host,
+        event_value: 1
+      });
+    }
+  }
+  // Attach listeners with capture:true so we run BEFORE the link navigates away
+  ['mousedown', 'click', 'auxclick'].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+      // re-decorate at the moment of click in case the link was just added
+      decorate(a);
+      fireOutboundConversion(a);
+    }, true);
+  });
+})();
+</script>
+
+<!-- Meta Pixel: add META_PIXEL_ID in build_partners.py to enable -->
+<link rel="icon" href="img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://images.pexels.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --espresso:#2a1a10; --espresso2:#3a2416; --emerald:#0f6e56; --emerald-deep:#0b5743;
+ --gold:#c9821b; --gold-soft:#e2a84e; --cream:#f5efe3; --paper:#fff;
+ --ink:#2b2118; --ink-soft:#6a5e4f; --line:#e8ddcb;
+ --r:22px; --shadow:0 30px 70px -34px rgba(40,24,10,.5); --shadow-sm:0 16px 36px -22px rgba(40,24,10,.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--cream);line-height:1.62;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Lora',Georgia,serif;font-weight:600;line-height:1.1;letter-spacing:-.015em}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-size:.74rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.eyebrow::before{content:"";width:26px;height:1.5px;background:var(--gold);opacity:.7}
+.eyebrow.c::before{display:none}
+svg.ico{width:1.4em;height:1.4em;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:middle}
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:1rem 1.8rem;border-radius:999px;font-weight:600;font-size:1rem;cursor:pointer;border:none;font-family:inherit;line-height:1;transition:transform .16s,box-shadow .16s,background .2s,color .2s}
+.btn svg.ico{width:1.05em;height:1.05em;stroke-width:2}
+.btn-gold{background:var(--gold);color:#2a1a08;box-shadow:0 16px 34px -12px rgba(201,130,27,.6)}
+.btn-gold:hover{background:var(--gold-soft);transform:translateY(-2px)}
+.btn-emerald{background:var(--emerald);color:#fff;box-shadow:0 16px 34px -14px rgba(15,110,86,.55)}
+.btn-emerald:hover{background:var(--emerald-deep);transform:translateY(-2px)}
+.btn-ghost-l{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.btn-ghost-l:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+.btn-lg{padding:1.15rem 2.1rem;font-size:1.05rem}
+
+/* header */
+.phdr{position:sticky;top:0;z-index:50;background:rgba(42,26,16,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.phdr-in{display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto;padding:.4rem 26px}
+.phdr .brand{display:flex;align-items:center;gap:.6rem;color:#fff;font-family:'Lora',serif;font-size:1.2rem}
+.phdr .brand .emblem{width:62px;height:62px;object-fit:contain}
+.phdr .brand small{display:block;font-family:'Inter';font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin-top:1px}
+.phdr .hbtn{padding:.7rem 1.25rem;font-size:.9rem}
+@media(max-width:640px){.phdr .hbtn{display:none}.phdr .brand .emblem{width:52px;height:52px}}
+
+/* hero */
+.phero{position:relative;color:#fff;overflow:hidden;background:linear-gradient(120deg,#241509 0%,#3a2416 52%,#173d31 130%)}
+.phero::after{content:"";position:absolute;inset:0;background:radial-gradient(900px 500px at 82% 18%,rgba(201,130,27,.22),transparent 60%);pointer-events:none}
+.phero-grid{position:relative;display:grid;grid-template-columns:1.08fr .92fr;gap:38px;align-items:center;min-height:min(86vh,760px);padding:70px 0}
+.phero h1{font-size:clamp(2.5rem,5.3vw,4.3rem);margin:1.1rem 0 1.2rem;color:#fff}
+.phero h1 em{font-style:italic;color:var(--gold-soft)}
+.phero .lead{font-size:1.16rem;color:rgba(255,255,255,.84);max-width:35rem;margin-bottom:2rem}
+.phero-cta{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.phero-trust{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;font-size:.86rem;color:rgba(255,255,255,.78)}
+.phero-trust .av{display:flex}
+.phero-trust .av span{width:36px;height:36px;border-radius:50%;border:2.5px solid #3a2416;background-size:cover;background-position:center;margin-left:-11px}
+.phero-trust .av span:first-child{margin-left:0}
+.phero-media{position:relative;aspect-ratio:4/4.4;border-radius:28px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.12)}
+.phero-media img{width:100%;height:100%;object-fit:cover}
+.phero-badge{position:absolute;left:18px;bottom:18px;right:18px;background:rgba(42,26,16,.74);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:.85rem 1.05rem;display:flex;align-items:center;gap:.7rem;font-size:.92rem}
+.phero-badge .pawk{width:40px;height:40px;border-radius:12px;background:var(--gold);color:#2a1a08;display:grid;place-items:center;flex:none}
+.powered{display:inline-flex;align-items:center;gap:.45rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62);font-weight:600;margin-bottom:.2rem}
+
+/* sections */
+section{padding:84px 0}
+.sec-head{max-width:42rem;margin:0 auto 3rem;text-align:center}
+.sec-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem);margin:.7rem 0 .6rem}
+.sec-head p{color:var(--ink-soft);font-size:1.08rem}
+.soft{background:var(--paper)}
+.dark{background:linear-gradient(135deg,#241509,#37261a);color:#fff}
+.dark .sec-head p{color:rgba(255,255,255,.74)}
+
+/* why grid */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2rem 1.7rem;box-shadow:var(--shadow-sm);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.card .chip{width:54px;height:54px;border-radius:15px;background:linear-gradient(140deg,#e7f1ec,#cfe6dc);color:var(--emerald-deep);display:grid;place-items:center;margin-bottom:1.1rem}
+.card .chip svg.ico{width:1.7em;height:1.7em}
+.card h3{font-size:1.22rem;margin-bottom:.45rem}
+.card p{color:var(--ink-soft);font-size:.98rem}
+.card p em{color:var(--gold);font-style:normal;font-weight:600;font-size:.9rem}
+
+/* earnings pillars */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.pillar{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:2.1rem 1.8rem;backdrop-filter:blur(6px)}
+.pillar .chip{width:56px;height:56px;border-radius:15px;background:rgba(201,130,27,.16);color:var(--gold-soft);display:grid;place-items:center;margin-bottom:1.1rem}
+.pillar .chip svg.ico{width:1.8em;height:1.8em}
+.pillar h3{font-size:1.5rem;color:#fff;margin-bottom:.5rem}
+.pillar p{color:rgba(255,255,255,.8);font-size:1rem}
+.disc{max-width:50rem;margin:2.2rem auto 0;text-align:center;font-size:.82rem;color:rgba(255,255,255,.6)}
+
+/* audience split */
+.split{display:grid;grid-template-columns:1fr 1.05fr;gap:50px;align-items:center}
+.split-media{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:5/4.2}
+.split-media img{width:100%;height:100%;object-fit:cover}
+.split-media .glow{position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(42,26,16,.35))}
+.alist{list-style:none;margin-top:1.4rem;display:grid;gap:1.05rem}
+.alist li{display:flex;gap:.85rem}
+.alist .tk{width:30px;height:30px;border-radius:9px;background:var(--emerald);color:#fff;display:grid;place-items:center;flex:none;margin-top:2px}
+.alist .tk svg.ico{width:1.05em;height:1.05em;stroke-width:2.4}
+.alist b{display:block;font-size:1.04rem;color:var(--ink)}
+.alist span{color:var(--ink-soft);font-size:.97rem}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.step{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:2rem 1.5rem;box-shadow:var(--shadow-sm)}
+.step .num{counter-increment:s;font-family:'Lora',serif;font-size:2.4rem;color:var(--gold);line-height:1;opacity:.55}
+.step .num::before{content:counter(s)}
+.step .chip{width:46px;height:46px;border-radius:13px;background:linear-gradient(140deg,#f3e7d3,#e8d3ad);color:var(--espresso2);display:grid;place-items:center;margin:.7rem 0 .9rem}
+.step h3{font-size:1.14rem;margin-bottom:.4rem}
+.step p{color:var(--ink-soft);font-size:.95rem}
+
+/* why pawtree */
+.paw-card{max-width:50rem;margin:0 auto;background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:3rem;box-shadow:var(--shadow-sm)}
+.paw-card p{color:var(--ink-soft);font-size:1.06rem;margin-bottom:1.1rem}
+.paw-card p:last-child{margin-bottom:0}
+.paw-card strong{color:var(--ink)}
+
+/* faq */
+.faq{max-width:48rem;margin:0 auto;display:grid;gap:12px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:0 1.4rem;box-shadow:var(--shadow-sm)}
+.faq summary{cursor:pointer;list-style:none;padding:1.25rem 0;font-family:'Lora',serif;font-size:1.12rem;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:'Inter';font-size:1.5rem;color:var(--gold);flex:none;transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .ans{padding:0 0 1.3rem;color:var(--ink-soft);font-size:1rem;margin-top:-.3rem}
+
+/* final cta */
+.fcta{background:linear-gradient(120deg,#241509,#3a2416 55%,#0f6e56 150%);color:#fff;text-align:center;border-radius:34px;padding:4.5rem 2rem;position:relative;overflow:hidden}
+.fcta::after{content:"";position:absolute;inset:0;background:radial-gradient(700px 380px at 80% 10%,rgba(201,130,27,.25),transparent 60%)}
+.fcta>*{position:relative}
+.fcta h2{font-size:clamp(2rem,4vw,3rem);color:#fff;margin-bottom:.7rem}
+.fcta p{color:rgba(255,255,255,.82);max-width:38rem;margin:0 auto 2rem;font-size:1.1rem}
+
+/* footer */
+.pfoot{background:#1f1409;color:rgba(255,255,255,.62);padding:54px 0 40px;font-size:.9rem}
+.pfoot .brand{display:flex;align-items:center;gap:.55rem;color:#fff;font-family:'Lora',serif;font-size:1.15rem;margin-bottom:1rem}
+.pfoot .brand .emblem{width:50px;height:50px;object-fit:contain}
+.pfoot .legal{max-width:60rem;font-size:.8rem;line-height:1.7;color:rgba(255,255,255,.5)}
+.pfoot a{color:var(--gold-soft)}
+.pfoot .frow{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid rgba(255,255,255,.1)}
+
+/* transition overlay */
+.ovl{position:fixed;inset:0;z-index:100;background:linear-gradient(135deg,#241509,#3a2416);color:#fff;display:none;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.ovl.on{display:flex}
+.ovl-in{max-width:30rem}
+.ovl .emblem{width:104px;height:104px;object-fit:contain;margin:0 auto 1.3rem;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.06);opacity:1}}
+.spin{width:38px;height:38px;border-radius:50%;border:3px solid rgba(255,255,255,.18);border-top-color:var(--gold);margin:0 auto 1.3rem;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ovl-msg{font-family:'Lora',serif;font-size:1.3rem;min-height:1.7em;transition:opacity .35s}
+.ovl-sub{color:rgba(255,255,255,.6);font-size:.92rem;margin-top:.7rem}
+.ovl-go{margin-top:1.8rem;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .4s,transform .4s}
+.ovl-go.show{opacity:1;transform:none;pointer-events:auto}
+.ovl-fine{margin-top:1rem;font-size:.8rem;color:rgba(255,255,255,.5)}
+
+/* reveal */
+.js .reveal{opacity:0;transform:translateY(22px)}
+.js .reveal.in{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease}
+
+@media(max-width:920px){
+ .phero-grid,.split{grid-template-columns:1fr;gap:34px}
+ .phero-media{aspect-ratio:16/12;max-width:520px}
+ .cards,.pillars{grid-template-columns:1fr 1fr}
+ .steps{grid-template-columns:1fr 1fr}
+ .paw-card{padding:2rem}
+}
+@media(max-width:560px){
+ section{padding:60px 0}
+ .cards,.pillars,.steps{grid-template-columns:1fr}
+ .phero-grid{padding:48px 0}
+}
+</style>
+</head>
+<body>
+
+<header class="phdr">
+ <div class="phdr-in">
+   <a class="brand" href="index.html"><span><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span><span>Hound&#39;s Hearth<small>Partner Network</small></span></a>
+   <a class="btn btn-gold hbtn js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Partner</a>
+ </div>
+</header>
+
+<!-- SECTION 1 — HERO -->
+<section class="phero" style="padding:0">
+ <div class="wrap"><div class="phero-grid">
+   <div class="phero-text">
+     <span class="eyebrow" data-seg="eyebrow">Hound&#39;s Hearth Partner Network</span>
+     <h1 data-seg="h1">Build a Pet-Wellness Business You&#39;re <em>Proud</em> Of</h1>
+     <p class="lead">Join the Hound&#39;s Hearth Partner Network. Our premium pet nutrition and wellness products are powered by pawTree — so your commissions are tracked and paid through pawTree&#39;s official partner platform, while Hound&#39;s Hearth backs you with marketing, content and support.</p>
+     <div class="phero-cta">
+       <a class="btn btn-gold btn-lg js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Hound&#39;s Hearth Partner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+       <a class="btn btn-ghost-l btn-lg" href="#how">See how it works</a>
+     </div>
+     <div class="phero-trust"><span class="av"><span style="background-image:url(https://images.pexels.com/photos/4586632/pexels-photo-4586632.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5860105/pexels-photo-5860105.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5495141/pexels-photo-5495141.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/8498841/pexels-photo-8498841.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/7210522/pexels-photo-7210522.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span></span><span>Join dog pros &amp; pet lovers building wellness income — powered by pawTree.</span></div>
+   </div>
+   <div>
+     <div class="phero-media reveal">
+       <img id="hero-img" src="https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000" alt="A happy, healthy dog" />
+       <div class="phero-badge"><span class="pawk"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg></span><span><strong>Powered by pawTree</strong><br><span style="color:rgba(255,255,255,.72);font-size:.82rem">Products, fulfillment, tracking &amp; payments</span></span></div>
+     </div>
+   </div>
+ </div></div>
+</section>
+
+<!-- SECTION 2 — WHY JOIN -->
+<section class="soft" id="why">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">Why partner with us</span><h2>Everything you need to recommend with confidence</h2><p>Premium products, recurring income and real marketing support — without the headache of inventory or logistics.</p></div>
+   <div class="cards"><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg></div><h3>Premium products</h3><p>Hundreds of dog products across food, treats, supplements and grooming — the same premium line we stand behind.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Recurring commissions</h3><p>Earn on first orders and every reorder. pawTree tracks and pays — and you never hold inventory.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg></div><h3>Marketing resources</h3><p>Social graphics, flyers, email templates and QR codes to make sharing effortless. <em>(Rolling out to partners.)</em></p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>A trusted foundation</h3><p>Premium products powered by pawTree&#39;s fulfillment and payments, backed by the Hound&#39;s Hearth brand.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 0 1 2 2v13a1 1 0 0 0-1-1H5Z"/><path d="M16 5h3v13a1 1 0 0 0-1-1h-2"/></svg></div><h3>Education &amp; AI tools</h3><p>Dog-care education to share with your audience today, with AI partner tools on the way.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z"/></svg></div><h3>Partner community</h3><p>Training, growth resources and a community of partners — expanding over time.</p></div></div>
+ </div>
+</section>
+
+<!-- SECTION 2.5 — WHAT YOU EARN -->
+<section class="dark" id="earn">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">What you earn</span><h2>The pawTree comp plan, simplified</h2><p>No dozen-tier maze. Here&#39;s what actually matters — in three lines.</p></div>
+   <div class="pillars"><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Up to 45% on new orders</h3><p>When someone you refer places their first order, you can earn up to 45%.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></div><h3>Keep earning up to 30%</h3><p>Food and supplements run out — so you earn up to 30% every time they reorder. That&#39;s the recurring part.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>No inventory, no minimums</h3><p>No stock to buy and no monthly purchase requirement. pawTree handles products, shipping, billing and tracking — you just share.</p></div></div>
+   <p class="disc reveal">Commission rates are set by pawTree and may change. These figures are not a promise of earnings — your results depend on your own effort. You&#39;ll see pawTree&#39;s official terms during enrollment.</p>
+ </div>
+</section>
+
+<!-- SECTION 3 — AUDIENCE SPECIFIC -->
+<section id="audience">
+ <div class="wrap"><div class="split">
+   <div class="split-media reveal"><img id="seg-media" src="https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=760" alt="Partner audience" /><span class="glow"></span></div>
+   <div class="reveal">
+     <span class="eyebrow c">Why it fits you</span>
+     <h2 data-seg="audTitle" style="font-size:clamp(1.8rem,3.4vw,2.5rem);margin:.6rem 0 .8rem">Who this is for</h2>
+     <p class="muted" data-seg="audLead" style="color:var(--ink-soft);font-size:1.08rem">If you work with dogs or simply love them — and you have people who trust your advice — this is built for you.</p>
+     <ul class="alist" id="aud-bullets"><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Groomers</b><span>Turn coat and skin advice into revenue between appointments.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Breeders &amp; trainers</b><span>Give families and dogs the best start, and earn for years.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Creators &amp; influencers</b><span>Turn your audience&#39;s trust into recurring income.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Pet businesses</b><span>Add a premium wellness line with zero inventory.</span></span></li></ul>
+   </div>
+ </div></div>
+</section>
+
+<!-- SECTION 4 — HOW IT WORKS -->
+<section class="soft" id="how">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">How it works</span><h2>From curious to official partner in minutes</h2><p>No fake approvals, no pressure. Just a clear path into pawTree&#39;s official enrollment, under Hound&#39;s Hearth.</p></div>
+   <div class="steps"><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg></div><h3>Explore the opportunity</h3><p>See how the Partner Network works and what you can earn — no pressure, no account needed.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></div><h3>Click continue</h3><p>When you&#39;re ready, choose “Become a Partner.” We&#39;ll prepare your partner setup.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg></div><h3>A quick handoff</h3><p>A brief branded moment while we get official enrollment ready — then your continue button appears.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></div><h3>Enroll through pawTree</h3><p>Complete your official signup on pawTree, under Hound&#39;s Hearth. pawTree tracks and pays your commissions from there.</p></div></div>
+   <div style="text-align:center;margin-top:2.6rem" class="reveal"><a class="btn btn-emerald btn-lg js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Partner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
+ </div>
+</section>
+
+<!-- SECTION 5 — WHY PAWTREE -->
+<section id="why-pawtree">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">Full transparency</span><h2>Why we build on pawTree</h2></div>
+   <div class="paw-card reveal">
+     <p>Hound&#39;s Hearth has partnered with <strong>pawTree</strong> to power the parts of this business that are hard to do well: premium product manufacturing, order fulfillment, ecommerce, customer service, commission tracking and partner payments.</p>
+     <p>Your official enrollment is completed through pawTree, under the <strong>Hound&#39;s Hearth organization</strong>. That gives you the reliability of an established platform together with the support, content and community of Hound&#39;s Hearth.</p>
+     <p>We&#39;re upfront about this because we&#39;d rather you start with full clarity. When you continue, you&#39;ll be on pawTree&#39;s official site — signing up under us.</p>
+   </div>
+ </div>
+</section>
+
+<!-- SECTION 6 — FAQ -->
+<section class="soft" id="faq">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">Questions, answered</span><h2>Frequently asked</h2></div>
+   <div class="faq"><details><summary>What is Hound&#39;s Hearth?</summary><div class="ans">Hound&#39;s Hearth is an independent pet-wellness brand offering premium nutrition, supplements, treats and grooming — with honest guidance and real support for our partners.</div></details><details><summary>What is pawTree?</summary><div class="ans">pawTree is our product supplier and partner platform. They manufacture and ship the products, run the ecommerce and customer service, and track and pay partner commissions.</div></details><details><summary>Why do I register on pawTree?</summary><div class="ans">Because pawTree powers fulfillment, ecommerce and commission payments. You enroll through pawTree under the Hound&#39;s Hearth organization — which connects you to both the established pawTree platform and our partner community.</div></details><details><summary>Who pays commissions?</summary><div class="ans">pawTree tracks and pays your commissions directly through their official partner platform, on their schedule.</div></details><details><summary>Do I need to hold inventory?</summary><div class="ans">No. pawTree handles products, shipping and billing. You share and recommend; they fulfill and ship.</div></details><details><summary>How much can I earn?</summary><div class="ans">pawTree pays up to 45% on a new customer&#39;s first order and up to 30% on reorders. Rates are set by pawTree and can change, and there are no income guarantees — your results depend on your own effort.</div></details><details><summary>Who is this program for?</summary><div class="ans">Groomers, breeders, trainers, influencers, pet businesses, and any dog lover with an audience or community who values quality.</div></details><details><summary>Can I promote online and offline?</summary><div class="ans">Yes — social media, content, in person, or in your salon or business. We provide resources for both, subject to pawTree&#39;s partner advertising guidelines.</div></details></div>
+ </div>
+</section>
+
+<!-- SECTION 7 — FINAL CTA -->
+<section id="join">
+ <div class="wrap"><div class="fcta reveal">
+   <span class="powered"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg> Powered by pawTree</span>
+   <h2>Ready to become a Hound&#39;s Hearth Partner?</h2>
+   <p>Join the network, share products you believe in, and earn through pawTree&#39;s official platform — with Hound&#39;s Hearth behind you.</p>
+   <a class="btn btn-gold btn-lg js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Hound&#39;s Hearth Partner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+ </div></div>
+</section>
+
+<footer class="pfoot">
+ <div class="wrap">
+   <div class="brand"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /> Hound&#39;s Hearth</div>
+   <p class="legal">Hound&#39;s Hearth is an independent brand and authorized partner organization. Products, ecommerce, order fulfillment, customer service, commission tracking and partner payments are provided by pawTree. Partner enrollment is completed on pawTree&#39;s official platform under the Hound&#39;s Hearth organization, and is subject to pawTree&#39;s terms, policies and compensation plan. Commission figures shown are pawTree&#39;s published rates, may change, and are not a guarantee of income — individual results depend on your own effort and skill. This page is for prospective partners and is not a product offer to consumers.</p>
+   <div class="frow"><span>© <span id="yr">2026</span> Hound&#39;s Hearth. All rights reserved.</span><span><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="affiliate-disclosure.html">Disclosure</a></span></div>
+ </div>
+</footer>
+
+<!-- transition overlay -->
+<div class="ovl" id="ovl" role="dialog" aria-live="polite">
+ <div class="ovl-in">
+   <img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" />
+   <div class="spin" id="ovl-spin"></div>
+   <div class="ovl-msg" id="ovl-msg">Preparing your Hound&#39;s Hearth Partner setup…</div>
+   <div class="ovl-sub">You&#39;ll complete signup on pawTree, under Hound&#39;s Hearth.</div>
+   <a class="btn btn-gold btn-lg ovl-go" id="ovl-go" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Continue to official enrollment <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+   <div class="ovl-fine">Secure enrollment hosted by pawTree</div>
+ </div>
+</div>
+
+<script>
+document.documentElement.classList.add('js');
+(function(){
+ var ENROLL = "https://pawtree.com/houndshearth/enrollment";
+ var PIXEL  = "";
+ var TYPES  = ["groomer", "breeder", "trainer", "influencer", "business"];
+ var SEG    = {"default": {"eyebrow": "Hound&#39;s Hearth Partner Network", "h1": "Build a Pet-Wellness Business You&#39;re <em>Proud</em> Of", "audTitle": "Who this is for", "audTitleEy": "Who this is for", "audLead": "If you work with dogs or simply love them \u2014 and you have people who trust your advice \u2014 this is built for you.", "imgUrl": "https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Groomers</b><span>Turn coat and skin advice into revenue between appointments.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Breeders &amp; trainers</b><span>Give families and dogs the best start, and earn for years.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Creators &amp; influencers</b><span>Turn your audience&#39;s trust into recurring income.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Pet businesses</b><span>Add a premium wellness line with zero inventory.</span></span></li>", "mTitle": "Hound&#39;s Hearth Partner Network"}, "groomer": {"eyebrow": "For grooming professionals", "h1": "Grow Your Grooming Business While Helping Every Dog Leave <em>Healthier</em>", "audTitle": "Built for grooming professionals", "audTitleEy": "Built for grooming professionals", "audLead": "You already advise owners on coats, skin and shedding every day. Now those recommendations can grow your income between appointments.", "imgUrl": "https://images.pexels.com/photos/6131150/pexels-photo-6131150.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Skin &amp; coat that shows</b><span>Recommend omega oils, gentle shampoos and shed support that make your work last longer between visits.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>After-groom recommendations</b><span>Send clients home with the products you used or recommend \u2014 and earn when they reorder.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Deepen client trust</b><span>Become the expert who keeps their dog healthy, not just well-groomed.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Revenue with no shelf space</b><span>No retail inventory to stock \u2014 pawTree ships directly to your clients.</span></span></li>", "mTitle": "Grooming Partners \u2014 Hound&#39;s Hearth Partner Network"}, "breeder": {"eyebrow": "For breeders", "h1": "Give Every Puppy Family the <em>Best Start</em>", "audTitle": "Built for breeders", "audTitleEy": "Built for breeders", "audLead": "The families who take home your puppies trust you completely. Give them a nutrition plan that protects that bond \u2014 and earns for years.", "imgUrl": "https://images.pexels.com/photos/16299046/pexels-photo-16299046.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>The best possible start</b><span>Set every puppy up with premium nutrition from day one.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Transition kits</b><span>Send new families home with food and supplements that ease the move to their new home.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Lifelong nutrition plans</b><span>Guide owners through each life stage with products you trust.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Loyalty that compounds</b><span>Recurring reorders mean ongoing income from families you&#39;ve already helped.</span></span></li>", "mTitle": "Breeder Partners \u2014 Hound&#39;s Hearth Partner Network"}, "trainer": {"eyebrow": "For trainers", "h1": "Recommend Products You <em>Believe In</em> \u2014 and Earn for It", "audTitle": "Built for trainers", "audTitleEy": "Built for trainers", "audLead": "The treats in your pouch and the advice you give carry weight. Recommend products you&#39;d use anyway \u2014 and get paid for it.", "imgUrl": "https://images.pexels.com/photos/29582994/pexels-photo-29582994.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>High-value training treats</b><span>Single-ingredient, freeze-dried rewards dogs will actually work for.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Performance nutrition</b><span>Food and supplements that support energy, focus and recovery.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Joint &amp; mobility support</b><span>Keep active and working dogs moving comfortably.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Calm support</b><span>Calming aids for reactive or anxious dogs in your programs.</span></span></li>", "mTitle": "Trainer Partners \u2014 Hound&#39;s Hearth Partner Network"}, "influencer": {"eyebrow": "For pet creators", "h1": "Turn Your Pet Content Into <em>Long-Term Income</em>", "audTitle": "Built for pet creators", "audTitleEy": "Built for pet creators", "audLead": "You&#39;ve built an audience that trusts your taste. Turn that trust into income that keeps paying \u2014 long after the post goes up.", "imgUrl": "https://images.pexels.com/photos/18056082/pexels-photo-18056082.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Recurring, not one-off</b><span>Earn when your audience first orders and every time they reorder.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Exclusive discount codes</b><span>Give your followers a real reason to buy with member-only offers.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Shareable links</b><span>Drop trackable links in bios, stories and videos \u2014 pawTree tracks every sale.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Content that converts</b><span>Premium products that photograph and review beautifully.</span></span></li>", "mTitle": "Creator Partners \u2014 Hound&#39;s Hearth Partner Network"}, "business": {"eyebrow": "For pet businesses", "h1": "Offer Premium Pet Wellness \u2014 <em>Without Managing Inventory</em>", "audTitle": "Built for pet businesses", "audTitleEy": "Built for pet businesses", "audLead": "Add a premium wellness line to your shop, daycare or clinic \u2014 without a stockroom, supplier contracts or upfront cost.", "imgUrl": "https://images.pexels.com/photos/5670146/pexels-photo-5670146.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000", "bulletsHtml": "<li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>A new revenue stream</b><span>Layer product income on top of your core services.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Customer loyalty</b><span>Keep customers coming back with products that actually work.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Natural upsells</b><span>Recommend food, supplements and grooming alongside what you already offer.</span></span></li><li><span class=\"tk\"><svg class=\"ico\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4.5 4.5L19 7\"/></svg></span><span><b>Zero inventory risk</b><span>No stock to buy or store \u2014 pawTree fulfills and ships every order.</span></span></li>", "mTitle": "Business Partners \u2014 Hound&#39;s Hearth Partner Network"}};
+
+ // ---- segment switch ----
+ function qtype(){
+   try{ var t=(new URLSearchParams(location.search).get('type')||'').toLowerCase();
+        return TYPES.indexOf(t)>-1 ? t : 'default'; }catch(e){ return 'default'; }
+ }
+ var type = qtype();
+ if(type!=='default'){
+   var s = SEG[type];
+   document.querySelectorAll('[data-seg]').forEach(function(el){
+     var k = el.getAttribute('data-seg');
+     if(s[k]!=null) el.innerHTML = s[k];
+   });
+   if(s.mTitle) document.title = s.mTitle.replace(/&#39;/g,"'");
+   var hi = document.getElementById('hero-img');
+   if(hi && s.imgUrl) hi.src = s.imgUrl;
+   var ms = document.getElementById('seg-media');
+   if(ms && s.imgUrl) ms.src = s.imgUrl;
+   var ab = document.getElementById('aud-bullets');
+   if(ab && s.bulletsHtml) ab.innerHTML = s.bulletsHtml;
+ }
+
+ // ---- build attributed enrollment URL ----
+ function readCid(key){
+   try{ var raw=localStorage.getItem(key); if(!raw) return null;
+        var o=JSON.parse(raw); if(!o||!o.v||(Date.now()-o.t)>2592000000) return null; return o.v;
+   }catch(e){ return null; }
+ }
+ function enrollUrl(){
+   try{ var u=new URL(ENROLL);
+     var g=readCid('hh_gclid'), m=readCid('hh_msclkid');
+     if(g) u.searchParams.set('gclid',g);
+     if(m) u.searchParams.set('msclkid',m);
+     u.searchParams.set('utm_source','houndshearth');
+     u.searchParams.set('utm_medium','partner');
+     u.searchParams.set('utm_campaign', type);
+     return u.toString();
+   }catch(e){ return ENROLL; }
+ }
+
+ // ---- conversion fire (immediately before redirect) ----
+ var fired=false;
+ function fireConversion(){
+   if(fired) return; fired=true;
+   try{ if(typeof gtag==='function'){
+     gtag('event','partner_continue',{partner_type:type});
+     gtag('event','conversion',{send_to:'AW-11033587773/JJn0CNDhlMYcEL3gnI0p',value:1.5,currency:'USD',transaction_id:'partner_'+type+'_'+Date.now()});
+   }}catch(e){}
+   try{ if(window.uetq&&window.uetq.push) window.uetq.push('event','partner_continue',{event_category:'partner',event_label:type,event_value:1}); }catch(e){}
+   try{ if(window.fbq&&PIXEL) fbq('track','Lead',{content_name:'Partner Network',content_category:type}); }catch(e){}
+ }
+
+ // ---- overlay ----
+ var ovl=document.getElementById('ovl');
+ var msgEl=document.getElementById('ovl-msg');
+ var goEl=document.getElementById('ovl-go');
+ var msgs=["Preparing your Hound\u2019s Hearth Partner setup\u2026",
+           "Connecting you to our pawTree-powered partner network\u2026",
+           "Getting your official enrollment ready\u2026"];
+ var timers=[];
+ function clearT(){ timers.forEach(clearTimeout); timers=[]; }
+ function openOverlay(){
+   if(!ovl) return;
+   goEl.classList.remove('show');
+   goEl.href = enrollUrl();
+   ovl.classList.add('on');
+   var i=0; msgEl.textContent=msgs[0]; msgEl.style.opacity=1;
+   function step(){
+     i++;
+     if(i<msgs.length){
+       msgEl.style.opacity=0;
+       timers.push(setTimeout(function(){ msgEl.textContent=msgs[i]; msgEl.style.opacity=1; step2(); },350));
+     }
+   }
+   function step2(){ timers.push(setTimeout(step,1050)); }
+   timers.push(setTimeout(step,1050));
+   // reveal continue button after the sequence (~3.1s)
+   timers.push(setTimeout(function(){
+     document.getElementById('ovl-spin').style.display='none';
+     msgEl.textContent="You\u2019re all set \u2014 continue to official enrollment.";
+     msgEl.style.opacity=1;
+     goEl.classList.add('show');
+   },3100));
+ }
+ document.querySelectorAll('.js-enroll').forEach(function(a){
+   a.addEventListener('click',function(e){ e.preventDefault(); openOverlay(); });
+ });
+ if(goEl){ goEl.addEventListener('click',function(){ fireConversion(); /* navigation proceeds */ }); }
+
+ // ---- reveal on scroll ----
+ var io=new IntersectionObserver(function(es){
+   es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+ },{threshold:.12});
+ document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+ // ---- year ----
+ var y=document.getElementById('yr'); if(y) y.textContent=new Date().getFullYear();
+})();
+</script>
+</body></html>
