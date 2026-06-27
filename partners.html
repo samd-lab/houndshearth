@@ -346,6 +346,23 @@ select.ovl-in-f{cursor:pointer}
 }
 .formwrap{max-width:31rem;margin:0 auto}
 .formcard{background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:2.4rem 2.2rem;box-shadow:var(--shadow);text-align:center}
+/* ===== PARTNER READABILITY OVERRIDES ===== */
+.phero .lead{color:rgba(255,255,255,.94);font-size:1.22rem}
+.phero .eyebrow{color:var(--gold-soft)}
+.phero .eyebrow::before{background:var(--gold-soft)}
+.tint{background:var(--cream)}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:s}
+/* lighter, higher-contrast benefit + earn cards */
+.sec-head h2{color:var(--ink)}
+.card h3{color:var(--ink)}
+.card p{color:#564c3e}
+.pillar{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.pillar h3{color:var(--ink);font-size:1.4rem}
+.pillar p{color:#564c3e}
+.pillar .chip{background:linear-gradient(140deg,#fbeede,#f4ddb4);color:#a9690f}
+.disc{color:var(--ink-soft)}
+.alist span{color:#564c3e}
+@media(max-width:760px){ .steps3{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -353,7 +370,7 @@ select.ovl-in-f{cursor:pointer}
 <header class="phdr">
  <div class="phdr-in">
    <a class="brand" href="index.html"><span><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span><span>Hound&#39;s Hearth<small>Partner Network</small></span></a>
-   <a class="btn btn-gold hbtn js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Partner</a>
+   <a class="btn btn-gold hbtn js-enroll" href="#join">Check eligibility</a>
  </div>
 </header>
 
@@ -362,17 +379,17 @@ select.ovl-in-f{cursor:pointer}
    <div class="phero-text">
      <span class="eyebrow" data-seg="eyebrow">Hound&#39;s Hearth Partner Network</span>
      <h1 data-seg="h1">Build a Pet-Wellness Business You&#39;re <em>Proud</em> Of</h1>
-     <p class="lead">Join the Hound&#39;s Hearth Partner Network. Our premium pet nutrition and wellness products are powered by pawTree — so your commissions are tracked and paid through pawTree&#39;s official partner platform, while Hound&#39;s Hearth backs you with marketing, content and support.</p>
+     <p class="lead">Recommend premium dog products that actually fix problems — itchy skin, sensitive stomachs, low immunity, stiff joints — and earn some of the highest commissions in the industry. No inventory, no startup cost.</p>
      <div class="phero-cta">
-       <a class="btn btn-gold btn-lg js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Hound&#39;s Hearth Partner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
-       <a class="btn btn-ghost-l btn-lg" href="#how">See how it works</a>
+       <a class="btn btn-gold btn-lg js-enroll" href="#join">Check your eligibility <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+       <a class="btn btn-ghost-l btn-lg" href="#how">How it works</a>
      </div>
-     <div class="phero-trust"><span class="av"><span style="background-image:url(https://images.pexels.com/photos/4586632/pexels-photo-4586632.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5860105/pexels-photo-5860105.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5495141/pexels-photo-5495141.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/8498841/pexels-photo-8498841.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/7210522/pexels-photo-7210522.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span></span><span>Join dog pros &amp; pet lovers building wellness income — powered by pawTree.</span></div>
+     <div class="phero-trust"><span class="av"><span style="background-image:url(https://images.pexels.com/photos/4586632/pexels-photo-4586632.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5860105/pexels-photo-5860105.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/5495141/pexels-photo-5495141.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/8498841/pexels-photo-8498841.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span><span style="background-image:url(https://images.pexels.com/photos/7210522/pexels-photo-7210522.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=80&h=80)"></span></span><span>Trusted by thousands of dog families.</span></div>
    </div>
    <div>
      <div class="phero-media reveal">
        <img id="hero-img" src="https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=1000" alt="A happy, healthy dog" />
-       <div class="phero-badge"><span class="pawk"><svg class="ico" viewBox="0 0 24 24"><circle cx="6.5" cy="11" r="1.8"/><circle cx="10" cy="7.5" r="1.8"/><circle cx="14" cy="7.5" r="1.8"/><circle cx="17.5" cy="11" r="1.8"/><path d="M8 16.5c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5c0 1.8-1.6 2.6-4 2.6s-4-.8-4-2.6Z"/></svg></span><span><strong>Powered by pawTree</strong><br><span style="color:rgba(255,255,255,.72);font-size:.82rem">Products, fulfillment, tracking &amp; payments</span></span></div>
+       <div class="phero-badge"><span class="pawk"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></span><span><strong>15–45% commissions</strong><br><span style="color:rgba(255,255,255,.74);font-size:.82rem">Recurring income, paid monthly</span></span></div>
      </div>
    </div>
  </div></div>
@@ -380,60 +397,22 @@ select.ovl-in-f{cursor:pointer}
 
 <section class="soft" id="why">
  <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">Why partner with us</span><h2>Everything you need to recommend with confidence</h2><p>Premium products, recurring income and real marketing support — without the headache of inventory or logistics.</p></div>
-   <div class="cards"><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M3 11h18M4 11a8 8 0 0 0 16 0M6.5 11c0-1.6 2.5-2.8 5.5-2.8s5.5 1.2 5.5 2.8"/></svg></div><h3>Premium products</h3><p>Hundreds of dog products across food, treats, supplements and grooming — the same premium line we stand behind.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Recurring commissions</h3><p>Earn on first orders and every reorder. pawTree tracks and pays — and you never hold inventory.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg></div><h3>Marketing resources</h3><p>Social graphics, flyers, email templates and QR codes to make sharing effortless. <em>(Rolling out to partners.)</em></p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>A trusted foundation</h3><p>Premium products powered by pawTree&#39;s fulfillment and payments, backed by the Hound&#39;s Hearth brand.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h9a2 2 0 0 1 2 2v13a1 1 0 0 0-1-1H5Z"/><path d="M16 5h3v13a1 1 0 0 0-1-1h-2"/></svg></div><h3>Education &amp; AI tools</h3><p>Dog-care education to share with your audience today, with AI partner tools on the way.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z"/></svg></div><h3>Partner community</h3><p>Training, growth resources and a community of partners — expanding over time.</p></div></div>
+   <div class="sec-head reveal"><span class="eyebrow c">Why join</span><h2>Recommend products that work — and get paid for years</h2><p>Real results for dogs, and real, recurring income for you.</p></div>
+   <div class="cards"><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>Products that solve real problems</h3><p>Target itchy skin, upset stomachs, low immunity, stiff joints and dull coats — and dogs love the taste.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Among the highest commissions</h3><p>Earn 15–45% on every order — one of the most generous payouts in the industry.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></div><h3>Recurring, sticky income</h3><p>Customers reorder food and supplements for years — bigger baskets, longer lifetimes, repeat commissions.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.8 6.8 19.1l1-5.8L3.5 9.2l5.9-.9Z"/></svg></div><h3>Trusted by thousands</h3><p>Real results and loyal customers stand behind every product you recommend.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg></div><h3>Zero startup cost</h3><p>No inventory to buy and no fees to begin — start with nothing down.</p></div><div class="card reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg></div><h3>Your own site &amp; tools</h3><p>A ready-made website with products and content, plus fair, transparent tracking and on-time payments.</p></div></div>
  </div>
 </section>
 
-<section class="dark" id="earn">
+<section id="how">
  <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">What you earn</span><h2>The pawTree comp plan, simplified</h2><p>No dozen-tier maze. Here&#39;s what actually matters — in three lines.</p></div>
-   <div class="pillars"><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Up to 45% on new orders</h3><p>When someone you refer places their first order, you can earn up to 45%.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></div><h3>Keep earning up to 30%</h3><p>Food and supplements run out — so you earn up to 30% every time they reorder. That&#39;s the recurring part.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>No inventory, no minimums</h3><p>No stock to buy and no monthly purchase requirement. pawTree handles products, shipping, billing and tracking — you just share.</p></div></div>
-   <p class="disc reveal">Commission rates are set by pawTree and may change. These figures are not a promise of earnings — your results depend on your own effort. You&#39;ll see pawTree&#39;s official terms during enrollment.</p>
+   <div class="sec-head reveal"><span class="eyebrow c">How it works</span><h2>Three simple steps</h2></div>
+   <div class="steps3"><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></div><h3>Check your eligibility</h3><p>Fill the short application below — it takes a minute. We review it and reply fast.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></div><h3>Register on the official platform</h3><p>If it&#39;s a fit, finish a quick signup on the official partner platform.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Pick your free kit</h3><p>Choose your starter kit — free for your first year — and start earning.</p></div></div>
+   <div style="text-align:center;margin-top:2.4rem" class="reveal"><a class="btn btn-emerald btn-lg js-enroll" href="#join">Check your eligibility <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
  </div>
 </section>
 
-<section id="audience">
- <div class="wrap"><div class="split">
-   <div class="split-media reveal"><img id="seg-media" src="https://images.pexels.com/photos/9291137/pexels-photo-9291137.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=900&h=760" alt="Partner audience" /><span class="glow"></span></div>
-   <div class="reveal">
-     <span class="eyebrow c">Why it fits you</span>
-     <h2 data-seg="audTitle" style="font-size:clamp(1.8rem,3.4vw,2.5rem);margin:.6rem 0 .8rem">Who this is for</h2>
-     <p class="muted" data-seg="audLead" style="color:var(--ink-soft);font-size:1.08rem">If you work with dogs every day — or simply love them — and people trust your advice, this is built for you.</p>
-     <ul class="alist" id="aud-bullets"><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Groomers</b><span>Turn coat and skin advice into revenue between appointments.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Breeders</b><span>Give every puppy family the best start, and earn for years.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Trainers</b><span>Recommend treats and nutrition you already swear by.</span></span></li><li><span class="tk"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></span><span><b>Creators, rescues &amp; pet pros</b><span>Turn trust and reach into recurring income.</span></span></li></ul>
-   </div>
- </div></div>
-</section>
-
-<section class="soft" id="how">
+<section class="soft" id="join">
  <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">How it works</span><h2>From curious to official partner in minutes</h2><p>No fake approvals, no pressure. Just a clear path into pawTree&#39;s official enrollment, under Hound&#39;s Hearth.</p></div>
-   <div class="steps"><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></svg></div><h3>Explore the opportunity</h3><p>See how the Partner Network works and what you can earn — no pressure, no account needed.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></div><h3>Tell us about you</h3><p>Share your details so we can tailor your setup and resources to how you&#39;ll promote.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="2.2"/></svg></div><h3>We review &amp; prepare</h3><p>We review your details and get your official enrollment ready.</p></div><div class="step reveal"><div class="num"></div><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></div><h3>Enroll through pawTree</h3><p>Finish your official signup on pawTree, under Hound&#39;s Hearth. pawTree tracks and pays your commissions from there.</p></div></div>
-   <div style="text-align:center;margin-top:2.6rem" class="reveal"><a class="btn btn-emerald btn-lg js-enroll" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener">Become a Partner <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a></div>
- </div>
-</section>
-
-<section id="why-pawtree">
- <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">Full transparency</span><h2>Why we build on pawTree</h2></div>
-   <div class="paw-card reveal">
-     <p>Hound&#39;s Hearth has partnered with <strong>pawTree</strong> to power the parts of this business that are hard to do well: premium product manufacturing, order fulfillment, ecommerce, customer service, commission tracking and partner payments.</p>
-     <p>Your official enrollment is completed through pawTree, under the <strong>Hound&#39;s Hearth organization</strong>. That gives you the reliability of an established platform together with the support, content and community of Hound&#39;s Hearth.</p>
-     <p>We&#39;re upfront about this because we&#39;d rather you start with full clarity. When you continue, you&#39;ll be on pawTree&#39;s official site — signing up under us.</p>
-   </div>
- </div>
-</section>
-
-<section class="soft" id="faq">
- <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">Questions, answered</span><h2>Frequently asked</h2></div>
-   <div class="faq"><details><summary>What is Hound&#39;s Hearth?</summary><div class="ans">Hound&#39;s Hearth is an independent pet-wellness brand offering premium nutrition, supplements, treats and grooming — with honest guidance and real support for our partners.</div></details><details><summary>What is pawTree?</summary><div class="ans">pawTree is our product supplier and partner platform. They manufacture and ship the products, run the ecommerce and customer service, and track and pay partner commissions.</div></details><details><summary>Why do I register on pawTree?</summary><div class="ans">Because pawTree powers fulfillment, ecommerce and commission payments. You enroll through pawTree under the Hound&#39;s Hearth organization — which connects you to both the established pawTree platform and our partner community.</div></details><details><summary>Will I have to re-enter some details?</summary><div class="ans">pawTree collects a few of its own details to finalize your account, so there may be a little overlap. We keep our questions short and hand you straight to official enrollment.</div></details><details><summary>Who pays commissions?</summary><div class="ans">pawTree tracks and pays your commissions directly through their official partner platform, on their schedule.</div></details><details><summary>Do I need to hold inventory?</summary><div class="ans">No. pawTree handles products, shipping and billing. You share and recommend; they fulfill and ship.</div></details><details><summary>How much can I earn?</summary><div class="ans">pawTree pays up to 45% on a new customer&#39;s first order and up to 30% on reorders. Rates are set by pawTree and can change, and there are no income guarantees — your results depend on your own effort.</div></details><details><summary>Who is this program for?</summary><div class="ans">Groomers, breeders, trainers, influencers, rescues, pet retailers and businesses, and any dog lover with an audience or community who values quality.</div></details></div>
- </div>
-</section>
-
-<section id="join" class="soft">
- <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">Join the network</span><h2>Become a Hound&#39;s Hearth Partner</h2><p>Tell us about you — it takes a minute. Then we&#39;ll take you to official enrollment on pawTree, under Hound&#39;s Hearth.</p></div>
+   <div class="sec-head reveal"><span class="eyebrow c">Step 1 — Apply</span><h2>Check your eligibility</h2><p>A quick application so we can match you to the right program. About a minute.</p></div>
    <div class="formwrap reveal">
      <div class="formcard">
        <div class="ovl-step" id="step-form">
@@ -467,33 +446,58 @@ select.ovl-in-f{cursor:pointer}
            </div>
            <label class="flabel">Dogs reached monthly (estimate)</label>
            <input class="ovl-in-f" type="number" name="dogs_monthly" min="0" placeholder="e.g. 40" />
-           <label class="fcheck"><input type="checkbox" name="consent" value="yes" required /><span>I agree to receive communications from Hound&#39;s Hearth about the Partner Network. Unsubscribe anytime.</span></label>
-           <button class="btn btn-gold btn-lg ovl-submit" type="submit">Continue <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+           <label class="fcheck"><input type="checkbox" name="consent" value="yes" required /><span>I agree to receive communications from Hound&#39;s Hearth. Unsubscribe anytime.</span></label>
+           <button class="btn btn-gold btn-lg ovl-submit" type="submit">Check my eligibility <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
          </form>
-         <small class="ovl-consent">You&#39;ll complete official signup on pawTree, under Hound&#39;s Hearth.</small>
+         <small class="ovl-consent">After you apply, you&#39;ll finish signup on the official partner platform.</small>
        </div>
        <div class="ovl-step" id="step-proc" hidden>
          <span class="ovl-mk pulse"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /></span>
          <div class="spin"></div>
          <div class="ovl-msg">Processing<span class="dots"><i>.</i><i>.</i><i>.</i></span></div>
-         <div class="ovl-sub" id="proc-msg">Reviewing your details</div>
+         <div class="ovl-sub" id="proc-msg">Reviewing your application</div>
        </div>
        <div class="ovl-step" id="step-go" hidden>
          <div class="ovl-tick"><svg class="ico" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg></div>
-         <h3>You&#39;re all set</h3>
-         <p class="ovl-p">Continue to official enrollment on pawTree, under Hound&#39;s Hearth. They&#39;ll confirm a few details to finalize your account.</p>
-         <a class="btn btn-gold btn-lg" id="ovl-go" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener" style="width:100%;justify-content:center">Continue to enrollment <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
-         <div class="ovl-fine">Secure enrollment hosted by pawTree</div>
+         <h3>You&#39;re a great fit</h3>
+         <p class="ovl-p">Next: finish your free signup on the official partner platform (powered by pawTree), then pick your free starter kit.</p>
+         <a class="btn btn-gold btn-lg" id="ovl-go" href="https://pawtree.com/houndshearth/enrollment" target="_self" rel="nofollow noopener" style="width:100%;justify-content:center">Continue to registration <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+         <div class="ovl-fine">Free to join — no startup cost</div>
        </div>
      </div>
    </div>
  </div>
 </section>
 
+<section class="tint" id="earn">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">The details</span><h2>How you earn</h2><p>Simple to start, with more as you grow.</p></div>
+   <div class="pillars"><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="m9.5 9.6-2.5-6h10l-2.5 6"/><path d="m10 14 1.4 1.4 2.6-2.8"/></svg></div><h3>Up to 45% on new orders</h3><p>When someone you refer places their first order, you can earn up to 45%.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M5 18C5 11 9 6 19 5c0 10-5 14-11 14-2 0-3-1-3-1Z"/><path d="M8 15c3-3 6-5 9-6"/></svg></div><h3>Keep earning up to 30%</h3><p>Food and supplements run out — so you earn up to 30% every time they reorder. That&#39;s the recurring part.</p></div><div class="pillar reveal"><div class="chip"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>No inventory, no minimums</h3><p>No stock to buy and no monthly purchase requirement. pawTree handles products, shipping, billing and tracking — you just share.</p></div></div>
+   <p class="disc reveal">Volume bonuses unlock as your customer base grows. Commission rates are set by our partner platform and may change; these figures are not a guarantee of income — results depend on your own effort.</p>
+ </div>
+</section>
+
+<section class="soft" id="about">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">How it&#39;s powered</span><h2>Backed by an established platform</h2></div>
+   <div class="paw-card reveal">
+     <p>Products, fulfillment, customer service, commission tracking and partner payments are powered by <strong>pawTree</strong>, an established pet-wellness company. You enroll under the <strong>Hound&#39;s Hearth</strong> organization and get our brand, content and support on top.</p>
+     <p>That means reliable products and on-time, transparent payouts — with no inventory on your side.</p>
+   </div>
+ </div>
+</section>
+
+<section class="tint" id="faq">
+ <div class="wrap">
+   <div class="sec-head reveal"><span class="eyebrow c">Questions</span><h2>Good to know</h2></div>
+   <div class="faq"><details><summary>What is Hound&#39;s Hearth?</summary><div class="ans">Hound&#39;s Hearth is an independent pet-wellness brand offering premium nutrition, supplements, treats and grooming — with honest guidance and real support for our partners.</div></details><details><summary>What is pawTree?</summary><div class="ans">pawTree is our product supplier and partner platform. They manufacture and ship the products, run the ecommerce and customer service, and track and pay partner commissions.</div></details><details><summary>Why do I register on pawTree?</summary><div class="ans">Because pawTree powers fulfillment, ecommerce and commission payments. You enroll through pawTree under the Hound&#39;s Hearth organization — which connects you to both the established pawTree platform and our partner community.</div></details><details><summary>Will I have to re-enter some details?</summary><div class="ans">pawTree collects a few of its own details to finalize your account, so there may be a little overlap. We keep our questions short and hand you straight to official enrollment.</div></details><details><summary>Who pays commissions?</summary><div class="ans">pawTree tracks and pays your commissions directly through their official partner platform, on their schedule.</div></details><details><summary>Do I need to hold inventory?</summary><div class="ans">No. pawTree handles products, shipping and billing. You share and recommend; they fulfill and ship.</div></details><details><summary>How much can I earn?</summary><div class="ans">pawTree pays up to 45% on a new customer&#39;s first order and up to 30% on reorders. Rates are set by pawTree and can change, and there are no income guarantees — your results depend on your own effort.</div></details><details><summary>Who is this program for?</summary><div class="ans">Groomers, breeders, trainers, influencers, rescues, pet retailers and businesses, and any dog lover with an audience or community who values quality.</div></details></div>
+ </div>
+</section>
+
 <footer class="pfoot">
  <div class="wrap">
    <div class="brand"><img class="emblem" src="img/logo-mark.png" alt="Hound&#39;s Hearth crest" /> Hound&#39;s Hearth</div>
-   <p class="legal">Hound&#39;s Hearth is an independent brand and authorized partner organization. Products, ecommerce, order fulfillment, customer service, commission tracking and partner payments are provided by pawTree. Partner enrollment is completed on pawTree&#39;s official platform under the Hound&#39;s Hearth organization, and is subject to pawTree&#39;s terms, policies and compensation plan. Commission figures shown are pawTree&#39;s published rates, may change, and are not a guarantee of income — individual results depend on your own effort and skill. This page is for prospective partners and is not a product offer to consumers.</p>
+   <p class="legal">Hound&#39;s Hearth is an independent brand and authorized partner organization. Products, fulfillment, commission tracking and partner payments are provided by pawTree. Enrollment is completed on the official partner platform under the Hound&#39;s Hearth organization, subject to its terms and compensation plan. Commission figures are the platform&#39;s published rates, may change, and are not a guarantee of income. For prospective partners; not a product offer to consumers.</p>
    <div class="frow"><span>© <span id="yr">2026</span> Hound&#39;s Hearth. All rights reserved.</span><span><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="affiliate-disclosure.html">Disclosure</a></span></div>
  </div>
 </footer>
