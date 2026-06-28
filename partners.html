@@ -409,6 +409,18 @@ select.ovl-in-f{cursor:pointer}
 .segchip:hover{border-color:var(--emerald);color:var(--emerald-deep)}
 .segchip.on{background:var(--emerald);color:#fff;border-color:var(--emerald);font-weight:700}
 @media(max-width:560px){.segbar-l{font-size:.76rem}.segchip{font-size:.8rem;padding:.4rem .75rem}}
+/* ===== SELECTOR + LOGO TWEAKS ===== */
+.phdr .brand .emblem{width:80px;height:80px}
+@media(max-width:640px){.phdr .brand .emblem{width:64px;height:64px}}
+.segbar-in{justify-content:center;padding:.9rem 0}
+.segbar-l{margin-right:.2rem}
+@media(max-width:600px){.segbar-in{justify-content:flex-start}}
+/* ===== WIDE 2-COL FORM ===== */
+.formwrap{max-width:47rem}
+.formcard{padding:2.3rem 2.4rem}
+.formcard .flabel{margin:.5rem 0 .3rem}
+.opt{font-weight:400;color:var(--ink-soft);font-size:.72rem;text-transform:none;letter-spacing:0}
+@media(max-width:560px){.formwrap{max-width:100%}.frow2{flex-direction:column;gap:0}}
 </style>
 </head>
 <body>
@@ -473,7 +485,7 @@ select.ovl-in-f{cursor:pointer}
 
 <section class="soft" id="join">
  <div class="wrap">
-   <div class="sec-head reveal"><span class="eyebrow c">Step 1 — Apply</span><h2>Check your eligibility</h2><p>A quick application so we can match you to the right program. About a minute.</p></div>
+   <div class="sec-head reveal"><span class="eyebrow c">Step 1 — Apply</span><h2>Check your eligibility</h2><p>Just the essentials — about 30 seconds. You&#39;ll add shipping and payout details on the official platform.</p></div>
    <div class="formwrap reveal">
      <div class="formcard">
        <div class="ovl-step" id="step-form">
@@ -481,32 +493,18 @@ select.ovl-in-f{cursor:pointer}
            <input type="hidden" name="form-name" value="partner-signup" />
            <input type="hidden" name="source" id="pf-source" value="Hound&#39;s Hearth — Partner Network" />
            <p class="hp"><label>Skip if you&#39;re human: <input name="bot-field" /></label></p>
-           <span class="fsub first">Your details</span>
-           <input class="ovl-in-f" type="text" name="name" placeholder="Full name" required />
-           <input class="ovl-in-f" type="email" name="email" placeholder="you@email.com" required />
-           <input class="ovl-in-f" type="tel" name="phone" placeholder="Phone" required />
-           <input class="ovl-in-f" type="text" name="business" placeholder="Business name (if any)" />
            <div class="frow2">
-             <input class="ovl-in-f" type="text" name="instagram" placeholder="Instagram @handle" />
-             <input class="ovl-in-f" type="text" name="website" placeholder="Website" />
+             <div><label class="flabel">Full name</label><input class="ovl-in-f" type="text" name="name" placeholder="Your name" required /></div>
+             <div><label class="flabel">Email</label><input class="ovl-in-f" type="email" name="email" placeholder="you@email.com" required /></div>
            </div>
-           <span class="fsub">About your work &amp; reach</span>
-           <label class="flabel">Business type</label>
-           <select class="ovl-in-f" name="role" id="pf-role" required>
-             <option value="" disabled selected>Select what best describes you</option>
-             <option>Groomer</option><option>Breeder</option><option>Influencer</option><option>Trainer</option><option>Rescue</option><option>Retail</option><option>Other</option>
-           </select>
-           <label class="flabel">Monthly audience (followers / subscribers)</label>
-           <select class="ovl-in-f" name="audience">
-             <option value="" disabled selected>Select a range</option>
-             <option>Just getting started</option><option>Under 1,000</option><option>1,000 – 10,000</option><option>10,000 – 100,000</option><option>100,000+</option>
-           </select>
            <div class="frow2">
-             <div><label class="flabel">City</label><input class="ovl-in-f" type="text" name="city" placeholder="City" /></div>
-             <div><label class="flabel">State</label><input class="ovl-in-f" type="text" name="state" placeholder="State" /></div>
+             <div><label class="flabel">Phone</label><input class="ovl-in-f" type="tel" name="phone" placeholder="(555) 555-5555" required /></div>
+             <div><label class="flabel">Business type</label><select class="ovl-in-f" name="role" id="pf-role" required><option value="" disabled selected>Select&#8230;</option><option>Groomer</option><option>Breeder</option><option>Influencer</option><option>Trainer</option><option>Rescue</option><option>Retail</option><option>Other</option></select></div>
            </div>
-           <label class="flabel">Dogs reached monthly (estimate)</label>
-           <input class="ovl-in-f" type="number" name="dogs_monthly" min="0" placeholder="e.g. 40" />
+           <div class="frow2">
+             <div><label class="flabel" id="lbl-audience">Clients / customers you serve per month</label><select class="ovl-in-f" name="audience"><option value="" disabled selected>Select a range</option><option>Just getting started</option><option>Under 1,000</option><option>1,000 – 10,000</option><option>10,000 – 100,000</option><option>100,000+</option></select></div>
+             <div><label class="flabel">Instagram or website <span class="opt">optional</span></label><input class="ovl-in-f" type="text" name="website" placeholder="@handle or yoursite.com" /></div>
+           </div>
            <label class="fcheck"><input type="checkbox" name="consent" value="yes" required /><span>I agree to receive communications from Hound&#39;s Hearth. Unsubscribe anytime.</span></label>
            <button class="btn btn-gold btn-lg ovl-submit" type="submit">Check my eligibility <svg class="ico" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
          </form>
@@ -582,6 +580,10 @@ select.ovl-in-f{cursor:pointer}
    var chips=document.querySelectorAll('.segchip');
    chips.forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-type')===t); });
  }
+ function reachLabel(t){
+   var el=document.getElementById('lbl-audience'); if(!el) return;
+   el.textContent = (t==='influencer') ? 'Your audience size (followers / subscribers)' : 'Clients / customers you serve per month';
+ }
  function applySeg(t){
    var s = SEG[t]; if(!s) return;
    type = t;
@@ -593,6 +595,7 @@ select.ovl-in-f{cursor:pointer}
    var ms=document.getElementById('seg-media'); if(ms && s.imgUrl) ms.src=s.imgUrl;
    var ab=document.getElementById('aud-bullets'); if(ab && s.bulletsHtml) ab.innerHTML=s.bulletsHtml;
    var rsel=document.getElementById('pf-role'); if(rsel && ROLEMAP[t]) rsel.value=ROLEMAP[t];
+   reachLabel(t);
    setActiveChip(t);
  }
  if(type!=='default') applySeg(type); else setActiveChip('');
@@ -606,6 +609,9 @@ select.ovl-in-f{cursor:pointer}
      try{ var u=new URL(location.href); u.searchParams.set('type',t); history.replaceState(null,'',u); }catch(err){}
    });
  });
+
+ var _rs=document.getElementById('pf-role');
+ if(_rs) _rs.addEventListener('change',function(){ reachLabel(_rs.value==='Influencer'?'influencer':'x'); });
 
  function readCid(key){
    try{ var raw=localStorage.getItem(key); if(!raw) return null;
