@@ -17,6 +17,7 @@ exports.handler = async (event) => {
     const apiKey = process.env.BREVO_API_KEY;
     const listId = parseInt(process.env.BREVO_LIST_ID || '0', 10);
     const partnerListId = parseInt(process.env.BREVO_PARTNER_LIST_ID || '0', 10);
+    const guideListId = parseInt(process.env.BREVO_GUIDE_LIST_ID || '0', 10);
 
     const body = JSON.parse(event.body || '{}');
     const payload = body.payload || {};
@@ -29,9 +30,12 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: 'skipped' };
     }
 
-    // Route Partner Network signups to their own list when configured; else fall back.
+    // Route signups to their dedicated list when configured; else fall back to the main list.
     const isPartner = formName === 'partner-signup';
-    const targetList = (isPartner && partnerListId) ? partnerListId : listId;
+    const isGuide = formName === 'guide-signup';
+    const targetList = (isPartner && partnerListId) ? partnerListId
+                     : (isGuide && guideListId) ? guideListId
+                     : listId;
     if (!apiKey || !targetList) {
       console.log('Brevo not configured (set BREVO_API_KEY and BREVO_LIST_ID / BREVO_PARTNER_LIST_ID).');
       return { statusCode: 200, body: 'brevo not configured' };
