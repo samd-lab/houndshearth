@@ -16,11 +16,11 @@
   All 4 IDs are already filled in below:
     GA4 Measurement ID:        G-SE5HXBZHWF
        (Property "Hound's Hearth" under account 156931159
-        "Thrive Freeze Dried Food", info@thrivefreeze.com)
+        "Thrive Freeze Dried Food", info@houndshearth.com)
     Microsoft UET Tag ID:      211075480
        (Tag "Hound's Hearth" in MS Ads sandeepdar@hotmail.com)
     Google Ads Conversion ID:  AW-11033587773
-       (Account 678-202-0572, info@thrivefreeze.com)
+       (Account 678-202-0572, info@houndshearth.com)
     Google Ads Conv. Label:    JJn0CNDhlMYcEL3gnI0p
        (Conversion action "Houndshearth - Outbound to PawTree",
         category Purchase, value $1.50/click)
@@ -394,17 +394,42 @@ src="https://www.facebook.com/tr?id=1028844179676022&ev=PageView&noscript=1"/></
 </div></div></section><section id="guide"><div class="wrap"><div class="capture">
   <span class="eyebrow">Free download</span>
   <h2>Get the Honest Dog Nutrition Guide</h2>
-  <p>What&#39;s actually worth buying, how much your dog needs, and how to avoid overpaying. Drop your email and get it instantly — plus the occasional honest tip. No spam, unsubscribe anytime.</p>
-  <form name="guide-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-capture action="/thank-you.html">
+  <p>What&#39;s actually worth buying, how much your dog needs, and how to avoid overpaying. Drop your name and email and get it instantly — plus the occasional honest tip. No spam, unsubscribe anytime.</p>
+  <form name="guide-signup" id="guide-form" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you.html">
     <input type="hidden" name="form-name" value="guide-signup" />
     <input type="hidden" name="source" value="Hound&#39;s Hearth website — Guide signup" />
     <p style="display:none"><label>Don&#39;t fill this: <input name="bot-field" /></label></p>
+    <input type="text" name="name" placeholder="Your name" required />
     <input type="email" name="email" placeholder="you@email.com" required />
     <button class="btn btn-primary" type="submit">Get the guide</button>
   </form>
+  <div class="capture-done" id="guide-success" hidden>
+    <span class="eyebrow">You&#39;re in — thank you!</span>
+    <h2>Your guide is ready</h2>
+    <p>Grab your Honest Dog Nutrition Guide right now, and keep an eye on your inbox for honest dog-care tips.</p>
+    <a class="btn btn-primary" href="/honest-dog-nutrition-guide.pdf" download>Download the guide (PDF)</a>
+  </div>
   <small data-note>Join 2,000+ pet families — across our Thrive Freeze &amp; Hound&#39;s Hearth family.</small>
   <small class="form-consent">By entering your name and email, you agree to receive dog-care advice and occasional promotional emails from Hound&#39;s Hearth. Unsubscribe anytime.</small>
-</div></div></section>
+</div></div>
+<script>
+(function(){
+  var f=document.getElementById('guide-form'); if(!f) return;
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=f.querySelector('button[type=submit]'); if(btn){btn.disabled=true;btn.textContent='Sending…';}
+    var body=new URLSearchParams(new FormData(f)).toString();
+    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body})
+      .catch(function(){})
+      .then(function(){
+        f.hidden=true;
+        var s=document.getElementById('guide-success'); if(s) s.hidden=false;
+        var n=document.querySelector('#guide [data-note]'); if(n) n.style.display='none';
+        try{ if(typeof gtag==="function") gtag('event','generate_lead',{form:'guide-signup'}); }catch(err){}
+      });
+  });
+})();
+</script></section>
 
 <footer><div class="wrap">
   <div class="foot-grid">
